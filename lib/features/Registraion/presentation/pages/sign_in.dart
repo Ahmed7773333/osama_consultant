@@ -1,12 +1,18 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:osama_consultant/core/utils/assets.dart';
+import 'package:osama_consultant/features/appointment.dart';
 
 import '../../../../config/app_routes.dart';
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/app_styles.dart';
 import '../../../../core/utils/componetns.dart';
 import '../widgets/filled_button.dart';
+import '../widgets/forget_password_bottom_sheet.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -18,6 +24,56 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   var keyy = GlobalKey<FormState>();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+    ],
+  );
+
+  GoogleSignInAccount? _currentGoogleUser;
+  AccessToken? _facebookAccessToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
+      setState(() {
+        _currentGoogleUser = account;
+      });
+    });
+    _googleSignIn.signInSilently();
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      debugPrint(error.toString());
+    }
+  }
+
+  // Future<void> _handleGoogleSignOut() async {
+  //   await _googleSignIn.signOut();
+  // }
+
+  Future<void> _handleFacebookSignIn() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      setState(() {
+        _facebookAccessToken = result.accessToken;
+      });
+    } else {
+      debugPrint(result.status.toString());
+      debugPrint(result.message);
+    }
+  }
+
+  // Future<void> _handleFacebookSignOut() async {
+  //   await FacebookAuth.instance.logOut();
+  //   setState(() {
+  //     _facebookAccessToken = null;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +114,12 @@ class _SignInPageState extends State<SignInPage> {
                   cusFilledButton(
                     icon: Assets.iconGoogle,
                     name: AppStrings.google,
-                    onClick: () {
-                      debugPrint('working');
-                    },
+                    onClick: _handleGoogleSignIn,
                   ),
                   cusFilledButton(
                     icon: Assets.iconFacebook,
                     name: AppStrings.facebook,
-                    onClick: () {
-                      debugPrint('working');
-                    },
+                    onClick: _handleFacebookSignIn,
                   ),
                 ],
               ),
@@ -86,6 +138,10 @@ class _SignInPageState extends State<SignInPage> {
                 onPressed: () {
                   if ((keyy.currentState?.validate() ?? false)) {
                     // Event sign in
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const AppointmentPage()));
                     debugPrint('working');
                   } else {
                     debugPrint('error');
@@ -93,7 +149,7 @@ class _SignInPageState extends State<SignInPage> {
                 },
                 style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
                 child: Text(
-                  AppStrings.signUp,
+                  AppStrings.logIn,
                   style: AppStyles.buttonTextStyle,
                 ),
               ),
@@ -103,13 +159,13 @@ class _SignInPageState extends State<SignInPage> {
                     showModalBottomSheet(
                       context: context,
                       builder: (context) {
-                        return ForgotPasswordBottomSheet();
+                        return const ForgotPasswordBottomSheet();
                       },
                     );
                   },
                   child: Text(
                     AppStrings.forget,
-                    style: AppStyles.whiteLableStyle,
+                    style: AppStyles.greenLableStyle,
                   ),
                 ),
               ),
@@ -120,117 +176,13 @@ class _SignInPageState extends State<SignInPage> {
                   },
                   child: Text(
                     AppStrings.dontHave,
-                    style: AppStyles.whiteLableStyle,
+                    style: AppStyles.greenLableStyle,
                   ),
                 ),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ForgotPasswordBottomSheet extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-
-  ForgotPasswordBottomSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Forgot password',
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Enter your email for the verification process, we will send 4 digits code to your email.',
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          SizedBox(height: 16.h),
-          Components.customTextField(
-            hint: 'Email',
-            controller: emailController,
-          ),
-          SizedBox(height: 16.h),
-          ElevatedButton(
-            onPressed: () {
-              // Handle continue button press
-              Navigator.pop(context); // Close the bottom sheet
-              showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return ResetPasswordBottomSheet();
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
-            child: Text(
-              'Continue',
-              style: AppStyles.buttonTextStyle,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ResetPasswordBottomSheet extends StatelessWidget {
-  final TextEditingController newPasswordController = TextEditingController();
-  final TextEditingController reEnterPasswordController =
-      TextEditingController();
-
-  ResetPasswordBottomSheet({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Reset Password',
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Set the new password for your account so you can login and access all the features.',
-            style: Theme.of(context).textTheme.displayMedium,
-          ),
-          SizedBox(height: 16.h),
-          Components.customTextField(
-            hint: 'New Password',
-            controller: newPasswordController,
-            isPassword: true,
-          ),
-          Components.customTextField(
-            hint: 'Re-enter Password',
-            controller: reEnterPasswordController,
-            isPassword: true,
-          ),
-          SizedBox(height: 16.h),
-          ElevatedButton(
-            onPressed: () {
-              // Handle update password button press
-              Navigator.pop(context); // Close the bottom sheet
-            },
-            style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
-            child: Text(
-              'Update Password',
-              style: AppStyles.buttonTextStyle,
-            ),
-          ),
-        ],
       ),
     );
   }

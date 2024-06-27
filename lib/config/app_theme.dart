@@ -12,12 +12,12 @@ class AppTheme {
 
     textTheme: TextTheme(
       displayLarge: TextStyle(
-        fontSize: 24.0,
+        fontSize: 24.0.sp,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
       displayMedium: TextStyle(
-        fontSize: 16.0,
+        fontSize: 16.0.sp,
         color: Colors.black54,
       ),
       displaySmall: TextStyle(

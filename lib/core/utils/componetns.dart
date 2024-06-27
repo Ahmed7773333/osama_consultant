@@ -27,7 +27,9 @@ class Components {
             obscureText: isPassword ? !isShow : false,
             validator: (value) {
               if (value?.trim().isEmpty ?? true) {
-                return 'Field can\'t be empty';
+                return isPassword
+                    ? 'the password can\'t be empty and must contains capital letters and number and symbols'
+                    : 'Field can\'t be empty';
               }
               return null;
             },

@@ -16,6 +16,12 @@ class AppStyles {
     fontFamily: 'Poppins',
     color: AppColors.primary,
   );
+  static TextStyle greenLableStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Poppins',
+    color: AppColors.secondry,
+  );
   static TextStyle blueLableStyle = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,

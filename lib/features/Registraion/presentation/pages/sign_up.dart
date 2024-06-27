@@ -99,7 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         checked = ch!;
                       });
                     },
-                    activeColor: AppColors.primary,
+                    activeColor: AppColors.secondry,
                   ),
                   Text(AppStrings.iAgree,
                       style: Theme.of(context).textTheme.displaySmall),
@@ -127,7 +127,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   },
                   child: Text(
                     AppStrings.alreadyHave,
-                    style: AppStyles.whiteLableStyle,
+                    style: AppStyles.greenLableStyle,
                   ),
                 ),
               ),
