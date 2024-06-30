@@ -4,6 +4,9 @@ class AppStrings {
   static const String fullNameHint = 'Name';
   static const String emailHint = 'Email';
   static const String passwordHint = 'Password';
+  static const String phoneHint = 'Phone number';
+  static const String confirmedpasswordHint = 'Confirm Password';
+
   static const String signUp = 'Sign Up';
   static const String iAgree =
       'I agree with the Terms of Service & Privacy Policy';

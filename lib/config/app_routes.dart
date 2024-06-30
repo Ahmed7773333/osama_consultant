@@ -20,8 +20,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SplachScreen());
       // case Routes.homeLayout:
       //   return MaterialPageRoute(builder: (_) => const HomeLayout());
-      case Routes.signin:
-        return MaterialPageRoute(builder: (_) => const SignInPage());
+      // case Routes.signin:
+      //   return MaterialPageRoute(builder: (_) => const SignInPage());
       case Routes.signUp:
         return MaterialPageRoute(builder: (_) => const SignUpPage());
       default:

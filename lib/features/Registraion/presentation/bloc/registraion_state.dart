@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: must_be_immutable
 
 part of 'registraion_bloc.dart';
@@ -19,5 +20,8 @@ class AuthError extends RegistraionState {
 }
 
 class AuthSuccess extends RegistraionState {
-  // TODO: put the user variable
+  UserModel user;
+  AuthSuccess(
+    this.user,
+  );
 }

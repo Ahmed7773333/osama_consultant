@@ -4,18 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:osama_consultant/core/utils/assets.dart';
-import 'package:osama_consultant/features/appointment.dart';
 
 import '../../../../config/app_routes.dart';
 import '../../../../core/utils/app_strings.dart';
 import '../../../../core/utils/app_styles.dart';
 import '../../../../core/utils/componetns.dart';
+import '../bloc/registraion_bloc.dart';
 import '../widgets/filled_button.dart';
 import '../widgets/forget_password_bottom_sheet.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
+class SignInArguments {
+  final RegistraionBloc
+      bloc; // Replace `YourBlocType` with the actual type of `bloc`
+
+  SignInArguments(this.bloc);
+}
+
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  const SignInPage(this.bloc, {super.key});
+  final RegistraionBloc bloc;
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -32,10 +40,18 @@ class _SignInPageState extends State<SignInPage> {
 
   GoogleSignInAccount? _currentGoogleUser;
   AccessToken? _facebookAccessToken;
+  // Replace `YourBlocType` with the actual type of `bloc`
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final args = ModalRoute.of(context)?.settings.arguments;
+    //   debugPrint((args is SignInArguments).toString());
+    //   if (args is SignInArguments) {
+    //     bloc = args.bloc;
+    //   }
+    // });
     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) {
       setState(() {
         _currentGoogleUser = account;
@@ -138,10 +154,8 @@ class _SignInPageState extends State<SignInPage> {
                 onPressed: () {
                   if ((keyy.currentState?.validate() ?? false)) {
                     // Event sign in
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AppointmentPage()));
+                    widget.bloc.add(SignInEvent(
+                        emailController.text, passwordController.text));
                     debugPrint('working');
                   } else {
                     debugPrint('error');

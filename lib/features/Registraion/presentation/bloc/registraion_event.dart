@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 // ignore_for_file: must_be_immutable
 part of 'registraion_bloc.dart';
 
@@ -18,6 +19,14 @@ class SignUpEvent extends RegistraionEvent {
   String email;
   String password;
   String name;
+  String repassword;
+  String phone;
 
-  SignUpEvent(this.email, this.password, this.name);
+  SignUpEvent(
+    this.email,
+    this.password,
+    this.name,
+    this.phone,
+    this.repassword,
+  );
 }

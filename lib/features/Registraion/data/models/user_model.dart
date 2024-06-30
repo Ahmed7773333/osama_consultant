@@ -1,41 +1,27 @@
-import '../../domain/entities/user_entity.dart';
-
-// ignore: must_be_immutable
-class UserModel extends UserEntity {
-  UserModel({
-    this.message,
-    super.user,
-    super.token,
-  });
-
-  UserModel.fromJson(dynamic json) {
-    message = json['message'];
-    user = json['user'] != null ? User.fromJson(json['user']) : null;
-    token = json['token'];
-  }
-
+class UserModel {
+  bool? success;
+  Data? data;
   String? message;
 
-  @override
-  List<Object?> get props => [super.props, message];
+  UserModel({this.success, this.data, this.message});
+
+  UserModel.fromJson(Map<String, dynamic> json) {
+    success = json['success'];
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    message = json['message'];
+  }
 }
 
-// ignore: must_be_immutable
-class User extends UserDataEntity {
-  User({
-    super.name,
-    super.email,
-    this.role,
-  });
+class Data {
+  String? token;
+  String? name;
+  String? email;
 
-  User.fromJson(dynamic json) {
+  Data({this.token, this.name, this.email});
+
+  Data.fromJson(Map<String, dynamic> json) {
+    token = json['token'];
     name = json['name'];
     email = json['email'];
-    role = json['role'];
   }
-
-  String? role;
-
-  @override
-  List<Object?> get props => [super.props, role];
 }

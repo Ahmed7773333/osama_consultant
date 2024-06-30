@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/api/api_manager.dart';
 import '../../../../core/api/end_points.dart';
 import '../../../../core/eror/failuers.dart';
-import '../../domain/entities/user_entity.dart';
 import '../models/user_model.dart';
 import 'auth_remote_ds.dart';
 
@@ -28,15 +28,17 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
   }
 
   @override
-  Future<Either<Failures, UserEntity>> signUP(
-      String email, String password, String name) async {
+  Future<Either<Failures, UserModel>> signUP(String email, String password,
+      String name, String phone, String rePassword) async {
     try {
       Response response = await apiManager.postData(EndPoints.signup, body: {
-        "email": email,
-        "password": password,
         "name": name,
+        "email": email,
+        "phone": phone,
+        "password": password,
+        "c_password": rePassword
       });
-
+      debugPrint('here');
       UserModel userModel = UserModel.fromJson(response.data);
       return Right(userModel);
     } catch (e) {

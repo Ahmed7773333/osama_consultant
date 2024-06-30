@@ -15,7 +15,8 @@ class ApiManager {
   }
 
   Future<Response> postData(String endPoint, {Map<String, dynamic>? body}) {
-    return dio.post(Constants.basURl + endPoint, data: body);
+    return dio.post(Constants.basURl + endPoint,
+        data: body, options: Options(contentType: "application/json"));
   }
 
   Future<Response> postDataa(String endPoint,

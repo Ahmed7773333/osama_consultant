@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:osama_consultant/features/Registraion/data/models/user_model.dart';
 
 import '../../../../core/eror/failuers.dart';
-import '../../domain/entities/user_entity.dart';
 
 abstract class AuthRmoteDs {
-  Future<Either<Failures, UserEntity>> signIn(String email, String password);
-  Future<Either<Failures, UserEntity>> signUP(
-      String email, String password, String name);
+  Future<Either<Failures, UserModel>> signIn(String email, String password);
+  Future<Either<Failures, UserModel>> signUP(String email, String password,
+      String name, String phone, String rePassword);
 }

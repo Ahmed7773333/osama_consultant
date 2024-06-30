@@ -12,14 +12,16 @@ class Components {
     ValueChanged<String>? onChange,
     ValueChanged<String>? onSubmit,
     IconData? icon,
+    bool isPhone = false,
     required TextEditingController controller,
   }) {
     return SizedBox(
-      width: 335.w,
+      width: isPhone ? 250.w : 335.w,
       height: 64.h,
       child: StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {
           return TextFormField(
+            keyboardType: isPhone ? TextInputType.number : null,
             style: Theme.of(context).textTheme.bodyLarge,
             onChanged: onChange,
             onFieldSubmitted: onSubmit,

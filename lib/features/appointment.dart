@@ -19,6 +19,19 @@ class _AppointmentPageState extends State<AppointmentPage> {
     '04:00 PM'
   ];
   final List<int> _reminderTimes = [10, 20, 25, 30, 35, 40];
+  void _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDay,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().copyWith(year: DateTime.now().year + 1),
+    );
+    if (picked != null && picked != _selectedDay) {
+      setState(() {
+        _selectedDay = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +50,10 @@ class _AppointmentPageState extends State<AppointmentPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              DatePickerDialog(
-                firstDate: DateTime.now(),
-                lastDate:
-                    DateTime.now().copyWith(year: DateTime.now().year + 1),
-                currentDate: DateTime.now(),
-                selectableDayPredicate: (day) {
-                  setState(() {
-                    _selectedDay = day;
-                  });
-                  return _selectedDay == day;
-                },
+              ElevatedButton(
+                onPressed: () => _selectDate(context),
+                child: Text(
+                    "Select Date: ${_selectedDay.toLocal()}".split(' ')[0]),
               ),
               const SizedBox(height: 20),
               const Text('Available Time'),
