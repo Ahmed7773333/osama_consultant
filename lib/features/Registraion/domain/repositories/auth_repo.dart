@@ -6,4 +6,5 @@ abstract class AuthRepo {
   Future<Either<Failures, UserModel>> signIn(String email, String password);
   Future<Either<Failures, UserModel>> signUP(String email, String password,
       String name, String phone, String repassword);
+  Future<Either<Failures, UserModel>> signInGoogle();
 }

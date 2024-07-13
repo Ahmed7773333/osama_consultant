@@ -15,6 +15,8 @@ class SignInEvent extends RegistraionEvent {
   SignInEvent(this.email, this.password);
 }
 
+class SignInGoogleEvent extends RegistraionEvent {}
+
 class SignUpEvent extends RegistraionEvent {
   String email;
   String password;

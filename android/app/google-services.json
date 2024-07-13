@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "267468997908",
+    "firebase_url": "https://osama-consultant-default-rtdb.firebaseio.com",
+    "project_id": "osama-consultant",
+    "storage_bucket": "osama-consultant.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267468997908:android:e3291e358187a781caee01",
+        "android_client_info": {
+          "package_name": "com.osamamounir.osama_consul"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267468997908-ov4g5r8v9obdr8ndkk5b91u9hugcu8rg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.osamamounir.osama_consul",
+            "certificate_hash": "68cea33458c8b1300abb569e49cbcc4e5c150471"
+          }
+        },
+        {
+          "client_id": "267468997908-egfr8b9fsmfeo4ncq7h1o8f8cbksvkqo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAWWzI599nzLMqenH2k9mtUR9cz1E8758"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267468997908-egfr8b9fsmfeo4ncq7h1o8f8cbksvkqo.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "267468997908-0hp03fado38vna07679npkgjtenntkem.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.osamaConsultant"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.example.osama_consultant
+package com.osamamounir.osama_consul
 
 import io.flutter.embedding.android.FlutterActivity
 

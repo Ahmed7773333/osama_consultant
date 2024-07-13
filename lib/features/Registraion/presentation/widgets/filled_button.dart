@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:osama_consultant/core/utils/app_styles.dart';
+
+import '../../../../core/utils/app_styles.dart';
 
 Widget cusFilledButton(
     {required String name,

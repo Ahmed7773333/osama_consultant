@@ -16,12 +16,24 @@ class Data {
   String? token;
   String? name;
   String? email;
+  String? phone;
+  String? createdAt;
+  int? isAdmin;
 
-  Data({this.token, this.name, this.email});
+  Data(
+      {this.token,
+      this.name,
+      this.email,
+      this.createdAt,
+      this.isAdmin,
+      this.phone});
 
   Data.fromJson(Map<String, dynamic> json) {
     token = json['token'];
     name = json['name'];
     email = json['email'];
+    phone = json['phone'];
+    createdAt = json['created_at'];
+    isAdmin = json['is_admin'];
   }
 }

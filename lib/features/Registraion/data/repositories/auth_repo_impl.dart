@@ -24,4 +24,9 @@ class AuthRepoImpl implements AuthRepo {
   ) {
     return authRmoteDs.signUP(email, password, name, phone, repassword);
   }
+
+  @override
+  Future<Either<Failures, UserModel>> signInGoogle() {
+    return authRmoteDs.signInGoogle();
+  }
 }

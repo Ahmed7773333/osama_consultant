@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:osama_consultant/core/utils/app_strings.dart';
-import 'package:osama_consultant/core/utils/app_styles.dart';
-import 'package:osama_consultant/core/utils/componetns.dart';
-
+import '../../../../core/utils/app_strings.dart';
+import '../../../../core/utils/app_styles.dart';
+import '../../../../core/utils/componetns.dart';
 import 'reset_password_bottom_sheet.dart';
 
 class ForgotPasswordBottomSheet extends StatefulWidget {

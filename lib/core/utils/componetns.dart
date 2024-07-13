@@ -1,4 +1,4 @@
-// import 'package:animations/animations.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:shop_app/core/utils/app_colors.dart';
@@ -61,22 +61,23 @@ class Components {
       ),
     );
   }
-  // static Widget openContainers({Widget? closedWidget, Widget? openedWidget}) {
-  //   return OpenContainer(
-  //     closedElevation: 0,
-  //     openElevation: 0,
-  //     transitionDuration: const Duration(milliseconds: 500),
-  //     closedColor: Colors.transparent,
-  //     openColor: Colors.transparent,
-  //     closedBuilder: (BuildContext context, void Function() action) {
-  //       return closedWidget!;
-  //     },
-  //     openBuilder:
-  //         (BuildContext context, void Function({Object? returnValue}) action) {
-  //       return openedWidget!;
-  //     },
-  //   );
-  // }
+
+  static Widget openContainers({Widget? closedWidget, Widget? openedWidget}) {
+    return OpenContainer(
+      closedElevation: 0,
+      openElevation: 0,
+      transitionDuration: const Duration(milliseconds: 500),
+      closedColor: Colors.transparent,
+      openColor: Colors.transparent,
+      closedBuilder: (BuildContext context, void Function() action) {
+        return closedWidget!;
+      },
+      openBuilder:
+          (BuildContext context, void Function({Object? returnValue}) action) {
+        return openedWidget!;
+      },
+    );
+  }
 
   static Widget fillButton(context,
       {Color? color, String? text, VoidCallback? onPressed}) {

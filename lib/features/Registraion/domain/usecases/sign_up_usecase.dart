@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:osama_consultant/features/Registraion/data/models/user_model.dart';
 
 import '../../../../core/eror/failuers.dart';
+import '../../data/models/user_model.dart';
 import '../repositories/auth_repo.dart';
 
 class SignUpUseCase {
