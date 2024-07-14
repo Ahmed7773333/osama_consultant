@@ -59,6 +59,7 @@ dependencies:
   just_audio: ^0.9.39
   firebase_auth: ^5.1.2
   flutter_sound: ^9.7.2
+  firebase_messaging: ^15.0.3
 
 dev_dependencies:
   flutter_test:

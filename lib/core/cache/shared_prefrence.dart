@@ -22,4 +22,5 @@ Future<void> removeUserData() async {
 
   await prefs.remove('is_admin');
   await prefs.remove('created_at');
+  await prefs.remove('lengthOfMessages');
 }

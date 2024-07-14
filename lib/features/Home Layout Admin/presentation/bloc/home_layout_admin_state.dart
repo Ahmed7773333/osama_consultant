@@ -12,6 +12,10 @@ class HomeLayoutAdminInitial extends HomeLayoutAdminState {}
 
 class LoadingState extends HomeLayoutAdminState {}
 
+class PauseState extends HomeLayoutAdminState {}
+
+class ResumeState extends HomeLayoutAdminState {}
+
 class ChatsLoaded extends HomeLayoutAdminState {
   final List<ChatModel> chats;
   const ChatsLoaded(this.chats);
@@ -26,6 +30,17 @@ class ChatsError extends HomeLayoutAdminState {
 
   @override
   List<Object> get props => [error];
+}
+
+class UpdatePositionState extends HomeLayoutAdminState {
+  UpdatePositionState(this.position, this.duration);
+  Duration position;
+  Duration duration;
+}
+
+class RecorderErrorState extends HomeLayoutAdminState {
+  String error;
+  RecorderErrorState(this.error);
 }
 
 class MessagessLoaded extends HomeLayoutAdminState {
@@ -52,3 +67,17 @@ class ErrorState extends HomeLayoutAdminState {
 }
 
 class SccussState extends HomeLayoutAdminState {}
+
+class StartRecorderState extends HomeLayoutAdminState {}
+
+class StopRecorderState extends HomeLayoutAdminState {}
+
+class PauseRecorderState extends HomeLayoutAdminState {}
+
+class ResumeRecorderState extends HomeLayoutAdminState {}
+
+class RecorderInitializedState extends HomeLayoutAdminState {}
+
+class CloseRecorderState extends HomeLayoutAdminState {}
+
+class ClosePlayerState extends HomeLayoutAdminState {}
