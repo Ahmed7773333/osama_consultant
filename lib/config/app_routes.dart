@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:osama_consul/features/Home%20Layout%20Admin/presentation/pages/chat_screen.dart';
+import 'package:osama_consul/features/Chat%20Screen/presentation/pages/chat_screen.dart';
 import 'package:osama_consul/features/Home%20Layout%20Admin/presentation/pages/home_layout_admin.dart';
 
 import '../../core/utils/app_strings.dart';

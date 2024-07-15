@@ -45,13 +45,7 @@ class NotificationDurationPickedState extends HomelayoutState {
   List<Object> get props => [duration];
 }
 
-class ChatLoaded extends HomelayoutState {
-  final List<MessageModel> messages;
-  const ChatLoaded(this.messages);
-
-  @override
-  List<Object> get props => [messages];
-}
+class ChatLoaded extends HomelayoutState {}
 
 class ChatError extends HomelayoutState {
   final String error;

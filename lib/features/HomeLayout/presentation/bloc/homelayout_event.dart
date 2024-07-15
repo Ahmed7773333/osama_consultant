@@ -49,4 +49,4 @@ class ConfirmBookingEvent extends HomelayoutEvent {
   const ConfirmBookingEvent(this.context);
 }
 
-class GetMessagesEvent extends HomelayoutEvent {}
+class GetNotificationsEvent extends HomelayoutEvent {}

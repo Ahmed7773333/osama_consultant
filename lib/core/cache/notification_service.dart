@@ -24,11 +24,6 @@ class NotificationService {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
     pref = await SharedPreferences.getInstance();
-    String? id = pref.getString('email');
-    if (id != null && pref.getInt('is_admin') != 1) {
-      listenToFirestoreChanges(id);
-    }
-
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
@@ -103,7 +98,6 @@ class NotificationService {
         .orderBy(FirebaseHelper.time, descending: false)
         .snapshots()
         .listen((snapshot) {
-      debugPrint(pref.getInt('lengthOfMessages').toString());
       if ((pref.getInt('lengthOfMessages') ?? 0) < snapshot.docs.length &&
           MessageModel.fromDocument(snapshot.docs.last).senderId != id) {
         MessageModel messageData =

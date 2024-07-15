@@ -30,7 +30,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          HomelayoutBloc(ConfirmBookingUseCase())..add(GetMessagesEvent()),
+          HomelayoutBloc(ConfirmBookingUseCase())..add(GetNotificationsEvent()),
       child: BlocConsumer<HomelayoutBloc, HomelayoutState>(
         listener: (context, state) {},
         builder: (context, state) {

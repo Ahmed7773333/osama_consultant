@@ -24,7 +24,7 @@ class _MessageBubbleState extends State<MessageBubble> {
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer();
-
+    widget.audioUrl != null ? _audioPlayer.setUrl(widget.audioUrl!) : null;
     // Listen for the completion event
     _audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.processingState == ProcessingState.completed) {
@@ -57,19 +57,16 @@ class _MessageBubbleState extends State<MessageBubble> {
     });
   }
 
-  void _togglePlayPause() async {
+  void _togglePlayPause() {
     if (_isPlaying) {
       _isPlaying = false;
       setState(() {});
 
-      await _audioPlayer.pause();
+      _audioPlayer.pause();
     } else {
       _isPlaying = true;
       setState(() {});
-
-      await _audioPlayer.setUrl(widget.audioUrl!);
-
-      await _audioPlayer.play();
+      _audioPlayer.play();
     }
   }
 
@@ -84,17 +81,19 @@ class _MessageBubbleState extends State<MessageBubble> {
     return Row(
       mainAxisAlignment:
           widget.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: <Widget>[
+      children: [
         Container(
           decoration: BoxDecoration(
             color: widget.isMe ? Colors.grey[300] : Colors.blue[300],
             borderRadius: BorderRadius.circular(12.r),
           ),
-          width: 200, // Adjust width as needed
+          width:
+              widget.audioUrl == null ? 150.w : 300.w, // Adjust width as needed
           padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
           margin: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               if (widget.audioUrl == null)
                 Text(
@@ -106,11 +105,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Audio Message',
-                      style: TextStyle(
-                          color: widget.isMe ? Colors.black : Colors.white),
-                    ),
                     Slider(
                       value: _position.inSeconds.toDouble(),
                       min: 0.0,
@@ -135,7 +129,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                           '${_position.inMinutes}:${(_position.inSeconds % 60).toString().padLeft(2, '0')} / '
                           '${_duration.inMinutes}:${(_duration.inSeconds % 60).toString().padLeft(2, '0')}',
                           style: TextStyle(
-                            fontSize: 12.0,
+                            fontSize: 12.sp,
                             color: widget.isMe ? Colors.black : Colors.white,
                           ),
                         ),

@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:osama_consul/features/HomeLayout/data/models/message.dart';
+import 'package:osama_consul/core/cache/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../../core/network/firebase_helper.dart';
 import '../../domain/usecases/confirem_booking.dart';
 
 part 'homelayout_event.dart';
@@ -18,26 +16,19 @@ class HomelayoutBloc extends Bloc<HomelayoutEvent, HomelayoutState> {
   Duration? _meetingDuration;
   Duration? _notificationDuration;
   final ConfirmBookingUseCase _confirmBookingUseCase;
-  List<MessageModel> messages = [];
   String id = '';
   HomelayoutBloc(this._confirmBookingUseCase) : super(HomelayoutInitial()) {
     on<PickDateEvent>((event, emit) {
       _selectedDate = event.date;
       emit(DatePickedState(event.date));
     });
-    on<GetMessagesEvent>((event, emit) async {
+    on<GetNotificationsEvent>((event, emit) async {
       try {
         SharedPreferences pref = await SharedPreferences.getInstance();
         id = pref.getString('email') ?? '';
-        var snapshot = await FirebaseFirestore.instance
-            .collection(FirebaseHelper.chatCollection)
-            .doc(id)
-            .collection(FirebaseHelper.messagesCollection)
-            .orderBy(FirebaseHelper.time, descending: true)
-            .get();
-        messages =
-            snapshot.docs.map((doc) => MessageModel.fromDocument(doc)).toList();
-        emit(ChatLoaded(messages));
+        NotificationService().listenToFirestoreChanges(id);
+
+        emit(ChatLoaded());
       } catch (e) {
         emit(ChatError(e.toString()));
       }

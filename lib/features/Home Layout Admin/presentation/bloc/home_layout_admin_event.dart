@@ -9,31 +9,3 @@ abstract class HomeLayoutAdminEvent extends Equatable {
 }
 
 class GetChatsEvent extends HomeLayoutAdminEvent {}
-
-class GetChatMessagesEvent extends HomeLayoutAdminEvent {
-  final String id;
-  const GetChatMessagesEvent(
-    this.id,
-  );
-}
-
-class ListenToPlayer extends HomeLayoutAdminEvent {}
-
-class SeekTo extends HomeLayoutAdminEvent {
-  double position;
-  SeekTo(this.position);
-}
-
-class TogglePlayPause extends HomeLayoutAdminEvent {}
-
-class CloseEvent extends HomeLayoutAdminEvent {}
-
-class InitRecorder extends HomeLayoutAdminEvent {}
-
-class ResumeRecorder extends HomeLayoutAdminEvent {}
-
-class StopRecorder extends HomeLayoutAdminEvent {}
-
-class StartRecorder extends HomeLayoutAdminEvent {}
-
-class PauseRecorder extends HomeLayoutAdminEvent {}
