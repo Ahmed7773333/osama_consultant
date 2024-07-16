@@ -1,12 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages, library_private_types_in_public_api
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:osama_consul/core/utils/app_strings.dart';
+import 'package:osama_consul/core/utils/app_styles.dart';
+import 'package:osama_consul/features/HomeLayout/presentation/widgets/gridview_times.dart';
+import 'package:osama_consul/features/HomeLayout/presentation/widgets/listview_days.dart';
 
-import '../../../domain/usecases/confirem_booking.dart';
-import '../../../domain/usecases/pick_date.dart';
-import '../../../domain/usecases/pick_duration.dart';
-import '../../../domain/usecases/pick_time.dart';
 import '../../widgets/booking_widgets.dart';
 
 class MeetingBooking extends StatefulWidget {
@@ -17,44 +16,14 @@ class MeetingBooking extends StatefulWidget {
 }
 
 class _MeetingBookingState extends State<MeetingBooking> {
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-  Duration? _meetingDuration;
   Duration? _notificationDuration;
-
-  void _pickDate() async {
-    DateTime? picked = await PickDate().call(context);
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
-    }
-  }
-
-  void _pickTime() async {
-    TimeOfDay? picked = await PickTime().call(context);
-    if (picked != null) {
-      setState(() {
-        _selectedTime = picked;
-      });
-    }
-  }
-
-  void _pickDuration() async {
-    Duration? picked = await PickDuration().call(context);
-    if (picked != null) {
-      setState(() {
-        _meetingDuration = picked;
-      });
-    }
-  }
 
   void _pickNotificationDuration() async {
     Duration? picked = await showDialog<Duration>(
       context: context,
       builder: (BuildContext context) {
         return const DurationPickerDialog(
-          initialDuration: Duration(minutes: 30),
+          initialDuration: Duration(minutes: 5),
         );
       },
     );
@@ -68,67 +37,59 @@ class _MeetingBookingState extends State<MeetingBooking> {
   @override
   Widget build(BuildContext context) {
     // final HomelayoutBloc bloc=widget.bloc;
-
+    final List<Map<String, dynamic>> daysOfWeek = [
+      {'day': 'Monday', 'on': true},
+      {'day': 'Tuesday', 'on': false},
+      {'day': 'Wednesday', 'on': false},
+      {'day': 'Thursday', 'on': false},
+      {'day': 'Friday', 'on': false},
+      {'day': 'saturday', 'on': false},
+      {'day': 'Sunday', 'on': false},
+    ];
+    final List<Map<String, dynamic>> timesOfDay = [
+      {'day': '11:00  to 12:00 ', 'on': true},
+      {'day': '11:00  to 12:00 ', 'on': false},
+      {'day': '11:00  to 12:00 ', 'on': false},
+      {'day': '11:00  to 12:00 ', 'on': false},
+      {'day': '11:00  to 12:00 ', 'on': false},
+      {'day': '11:00  to 12:00 ', 'on': false},
+      {'day': '11:00  to 12:00 ', 'on': false},
+    ];
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Book a Meeting'),
-      ),
       body: Padding(
         padding: EdgeInsets.all(16.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: _pickDate,
-              child: Text(
-                _selectedDate == null
-                    ? 'Select Date'
-                    : DateFormat.yMMMd().format(_selectedDate!),
-                style: TextStyle(fontSize: 20.sp),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(AppStrings.selectDay, style: AppStyles.greenLableStyle),
+              SizedBox(height: 20.h),
+              DaysListView(daysOfWeek),
+              SizedBox(height: 20.h),
+              Text(AppStrings.selectTime, style: AppStyles.greenLableStyle),
+              SizedBox(height: 20.h),
+              TimesGridView(timesOfDay),
+              SizedBox(height: 20.h),
+              Text(AppStrings.selectNotifyTime,
+                  style: AppStyles.greenLableStyle),
+              ElevatedButton(
+                onPressed: _pickNotificationDuration,
+                child: Text(
+                  _notificationDuration == null
+                      ? 'Select Notification Time'
+                      : '${_notificationDuration!.inMinutes} minutes before',
+                  style: TextStyle(fontSize: 20.sp),
+                ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            ElevatedButton(
-              onPressed: _pickTime,
-              child: Text(
-                _selectedTime == null
-                    ? 'Select Time'
-                    : _selectedTime!.format(context),
-                style: TextStyle(fontSize: 20.sp),
+              SizedBox(height: 50.h),
+              ElevatedButton(
+                onPressed: () {},
+                child:
+                    Text('Confirm Booking', style: TextStyle(fontSize: 20.sp)),
               ),
-            ),
-            SizedBox(height: 20.h),
-            ElevatedButton(
-              onPressed: _pickDuration,
-              child: Text(
-                _meetingDuration == null
-                    ? 'Select Duration'
-                    : '${_meetingDuration!.inHours} hours ${_meetingDuration!.inMinutes % 60} minutes',
-                style: TextStyle(fontSize: 20.sp),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            ElevatedButton(
-              onPressed: _pickNotificationDuration,
-              child: Text(
-                _notificationDuration == null
-                    ? 'Select Notification Time'
-                    : '${_notificationDuration!.inMinutes} minutes before',
-                style: TextStyle(fontSize: 20.sp),
-              ),
-            ),
-            SizedBox(height: 50.h),
-            ElevatedButton(
-              onPressed: () => ConfirmBookingUseCase().call(
-                  context: context,
-                  selectedDate: _selectedDate,
-                  selectedTime: _selectedTime,
-                  meetingDuration: _meetingDuration,
-                  notificationDuration: _notificationDuration),
-              child: Text('Confirm Booking', style: TextStyle(fontSize: 20.sp)),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

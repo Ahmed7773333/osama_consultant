@@ -23,4 +23,8 @@ class AppStrings {
       'You can search course, apply course and find scholarship for abroad studies';
   static const String logIn = 'Login';
   static const String forget = 'Forget Password';
+  //booking
+  static const String selectDay = 'Available Days';
+  static const String selectTime = 'Available Times';
+  static const String selectNotifyTime = 'Whould You like us to remind you?';
 }

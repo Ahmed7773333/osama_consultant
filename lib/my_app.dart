@@ -8,7 +8,8 @@ import 'config/app_theme.dart';
 
 class MyApp extends StatelessWidget {
   static final MyApp _instance = MyApp._internal();
-
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
   factory MyApp() {
     return _instance;
   }

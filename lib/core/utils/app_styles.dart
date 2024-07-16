@@ -10,8 +10,8 @@ class AppStyles {
     fontFamily: 'Poppins',
     color: AppColors.primary,
   );
-  static TextStyle whiteLableStyle = const TextStyle(
-    fontSize: 18,
+  static TextStyle whiteLableStyle = TextStyle(
+    fontSize: 13.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
     color: AppColors.primary,

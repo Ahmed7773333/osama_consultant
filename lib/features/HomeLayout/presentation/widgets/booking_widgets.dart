@@ -69,19 +69,29 @@ class DurationPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        NumberPicker(
-          value: duration.inHours,
-          minValue: 0,
-          maxValue: 23,
-          onChanged: (value) => onChange(
-              Duration(hours: value, minutes: duration.inMinutes % 60)),
+        Row(
+          children: [
+            NumberPicker(
+              value: duration.inHours,
+              minValue: 0,
+              maxValue: 23,
+              onChanged: (value) => onChange(
+                  Duration(hours: value, minutes: duration.inMinutes % 60)),
+            ),
+            const Text('hour'),
+          ],
         ),
-        NumberPicker(
-          value: duration.inMinutes % 60,
-          minValue: 0,
-          maxValue: 59,
-          onChanged: (value) =>
-              onChange(Duration(hours: duration.inHours, minutes: value)),
+        Row(
+          children: [
+            NumberPicker(
+              value: duration.inMinutes % 60,
+              minValue: 0,
+              maxValue: 59,
+              onChanged: (value) =>
+                  onChange(Duration(hours: duration.inHours, minutes: value)),
+            ),
+            const Text('minute'),
+          ],
         ),
       ],
     );
