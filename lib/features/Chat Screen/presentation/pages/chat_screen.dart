@@ -7,7 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/config/app_routes.dart';
 import 'package:osama_consul/core/utils/app_colors.dart';
 import 'package:osama_consul/features/Chat%20Screen/presentation/bloc/chat_screen_bloc.dart';
-import 'package:osama_consul/features/Home%20Layout%20Admin/data/models/chat_model.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/data/models/chat_model.dart';
 import 'package:osama_consul/features/Chat%20Screen/presentation/widgets/message_bubble.dart';
 
 import '../../../../core/network/firebase_helper.dart';

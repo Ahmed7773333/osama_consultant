@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/HomeLayout/data/models/message.dart';
+import '../../features/user/HomeLayout/data/models/message.dart';
 
 class FirebaseHelper {
   static String chatCollection = 'chats';

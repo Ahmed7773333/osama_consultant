@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/network/firebase_helper.dart';
-import '../../../HomeLayout/data/models/message.dart';
+import '../../../user/HomeLayout/data/models/message.dart';
 
 part 'chat_screen_event.dart';
 part 'chat_screen_state.dart';
