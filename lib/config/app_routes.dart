@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:osama_consul/features/Chat%20Screen/presentation/pages/chat_screen.dart';
+import 'package:osama_consul/features/admin/Requests%20Page/presentation/pages/requests_page.dart';
+import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/chat_screen.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/home_layout_admin.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/pages/mettings_control.dart';
+import 'package:osama_consul/features/general/settings/presentation/pages/settings_screen.dart';
+import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
+import 'package:osama_consul/features/user/MyRequests/presentation/pages/my_requests.dart';
+import 'package:osama_consul/features/user/MyRequests/presentation/pages/payment_screen.dart';
 
 import '../../core/utils/app_strings.dart';
 import '../../core/utils/app_styles.dart';
 import '../features/admin/Home Layout Admin/data/models/chat_model.dart';
 import '../features/user/HomeLayout/presentation/pages/home_layout.dart';
-import '../features/Registraion/presentation/pages/sign_up.dart';
+import '../features/general/Registraion/presentation/pages/sign_up.dart';
 import '../features/splach_page.dart';
+import '../features/user/MyRequests/presentation/pages/visa_screen.dart';
 
 class Routes {
   static const String splach = '/';
@@ -16,6 +22,11 @@ class Routes {
   static const String homeLayoutAdmin = 'homeAdmin';
   static const String chatScreenAdmin = 'chatScreenAdmin';
   static const String manageTimes = 'ManageTimes';
+  static const String settings = 'settings';
+  static const String requestsPage = 'requestsPage';
+  static const String visaScreen = 'visaScreen';
+  static const String myRequests = 'myRequests';
+  static const String paymentScren = 'paymentScren';
 
   static const String signIn = 'login';
   static const String signUp = 'signUp';
@@ -40,7 +51,19 @@ class RouteGenerator {
       case Routes.signUp:
         return MaterialPageRoute(builder: (_) => const SignUpPage());
       case Routes.manageTimes:
-        return MaterialPageRoute(builder: (_) => MettingsControl());
+        return MaterialPageRoute(builder: (_) => const MettingsControl());
+      case Routes.settings:
+        return MaterialPageRoute(builder: (_) => SettingsScreen());
+      case Routes.requestsPage:
+        return MaterialPageRoute(builder: (_) => const RequestsPage());
+      case Routes.visaScreen:
+        final args = settings.arguments as Map<String, dynamic>;
+        final cubit = args['cubit'] as MyrequestsCubit;
+        return MaterialPageRoute(builder: (_) => VisaScreen(cubit));
+      case Routes.myRequests:
+        return MaterialPageRoute(builder: (_) => const MyRequests());
+      case Routes.paymentScren:
+        return MaterialPageRoute(builder: (_) => const PaymentScreen());
       default:
         return unDefinedScreen();
     }

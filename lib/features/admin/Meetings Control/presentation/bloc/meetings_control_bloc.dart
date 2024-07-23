@@ -6,6 +6,7 @@ import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_s
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/add_slot.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_all_schedule.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_schedule_by_id.dart';
+import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_slot_by_id.dart';
 
 part 'meetings_control_event.dart';
 part 'meetings_control_state.dart';
@@ -16,11 +17,13 @@ class MeetingsControlBloc
   AddSlotUseCase addSlotUseCase;
   GetAllSchedules getAllSchedules;
   GetScheduleById getScheduleById;
+  GetSlotById getSlotById;
   List<ScheduleModel> daysOfWeek = [];
   List<SlotModel> timesOfDay = [];
   int selectedDay = 0;
-  MeetingsControlBloc(
-      this.addSlotUseCase, this.getAllSchedules, this.getScheduleById)
+  int selectedTime = 0;
+  MeetingsControlBloc(this.addSlotUseCase, this.getAllSchedules,
+      this.getScheduleById, this.getSlotById)
       : super(MeetingsControlInitial()) {
     on<MeetingsControlEvent>((event, emit) async {
       if (event is GetAllSchedulesEvent) {

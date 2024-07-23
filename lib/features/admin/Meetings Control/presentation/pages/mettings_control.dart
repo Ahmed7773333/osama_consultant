@@ -9,8 +9,8 @@ import 'package:osama_consul/features/admin/Meetings%20Control/data/models/add_s
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/widgets/time_gridview.dart';
 
 import '../../../../../core/utils/app_strings.dart';
-import '../../../../user/HomeLayout/presentation/widgets/listview_days.dart';
 import '../bloc/meetings_control_bloc.dart';
+import '../widgets/listview_days.dart';
 
 class MettingsControl extends StatelessWidget {
   const MettingsControl({super.key});
@@ -35,7 +35,7 @@ class MettingsControl extends StatelessWidget {
                     Text(AppStrings.selectDay,
                         style: AppStyles.greenLableStyle),
                     SizedBox(height: 20.h),
-                    DaysListView(
+                    daysListView(
                         MeetingsControlBloc.get(context).daysOfWeek,
                         MeetingsControlBloc.get(context),
                         MeetingsControlBloc.get(context).selectedDay),
@@ -43,7 +43,8 @@ class MettingsControl extends StatelessWidget {
                     Text(AppStrings.selectTime,
                         style: AppStyles.greenLableStyle),
                     SizedBox(height: 20.h),
-                    GridViewTimes(MeetingsControlBloc.get(context).timesOfDay),
+                    gridViewTimes(MeetingsControlBloc.get(context).timesOfDay,
+                        MeetingsControlBloc.get(context)),
                     SizedBox(height: 50.h),
                     ElevatedButton(
                       onPressed: () {

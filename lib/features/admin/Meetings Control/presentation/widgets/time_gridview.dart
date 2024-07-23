@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
 import '../../../../../core/utils/app_styles.dart';
 
-Widget GridViewTimes(List<SlotModel> daysList) {
-  void _toggleSelection(int index) {
-    // Since this is now a stateless widget function, you need to handle state management outside this function.
-    // For example, use a state management solution like Provider, Bloc, or setState in a parent stateful widget.
-  }
-
+Widget gridViewTimes(List<SlotModel> daysList, bloc) {
   return SizedBox(
     height:
         ((daysList.length % 2 == 0 ? daysList.length : daysList.length + 1) /
@@ -22,12 +18,11 @@ Widget GridViewTimes(List<SlotModel> daysList) {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: daysList.length,
       itemBuilder: (context, index) {
-        bool isSelected = daysList[index].status == 1;
+        bool isSelected = bloc.selectedTime == index;
 
         return GestureDetector(
           onTap: () {
-            _toggleSelection(index);
-            // Example: Navigator.pushNamed(context, '/yourRoute', arguments: daysList[index]);
+            bloc.add(GetSlotByIdUserEvent(index + 1));
           },
           child: Chip(
             label: Row(

@@ -2,15 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/utils/app_styles.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
-import 'package:osama_consul/features/admin/Meetings%20Control/presentation/bloc/meetings_control_bloc.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
 
-Widget DaysListView(
-    List<ScheduleModel> daysList, MeetingsControlBloc bloc, int selected) {
-  void _toggleSelection(int index) {
-    // Since this is now a stateless widget function, you need to handle state management outside this function.
-    // For example, use a state management solution like Provider, Bloc, or setState in a parent stateful widget.
-  }
-
+Widget daysListView(
+    List<ScheduleModel> daysList, HomelayoutBloc bloc, int selected) {
   return SizedBox(
     height: 60.h,
     child: ListView.builder(
@@ -21,9 +16,7 @@ Widget DaysListView(
 
         return GestureDetector(
           onTap: () {
-            // _toggleSelection(index);
-            // Example: Navigator.pushNamed(context, '/yourRoute', arguments: daysList[index]);
-            bloc.add(GetScheduleByIdEvent(index + 1));
+            bloc.add(GetScheduleByIdUserEvent(index + 1));
           },
           child: Chip(
             label: Row(

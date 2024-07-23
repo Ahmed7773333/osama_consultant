@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:osama_consul/core/utils/get_itt.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/tabs/home.dart';
 
-import '../../domain/usecases/confirem_booking.dart';
 import '../bloc/homelayout_bloc.dart';
 import '../tabs/booking.dart';
 import '../tabs/profile.dart';
@@ -29,8 +30,10 @@ class _HomeLayoutState extends State<HomeLayout> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          HomelayoutBloc(ConfirmBookingUseCase())..add(GetNotificationsEvent()),
+      create: (context) => sl<HomelayoutBloc>()
+        ..add(GetNotificationsEvent())
+        ..add(GetAllSchedulesUserEvent())
+        ..add(GetScheduleByIdUserEvent(1)),
       child: BlocConsumer<HomelayoutBloc, HomelayoutState>(
         listener: (context, state) {},
         builder: (context, state) {
@@ -38,11 +41,10 @@ class _HomeLayoutState extends State<HomeLayout> {
           return Scaffold(
             body: PageView(
               controller: _pageController,
-              children: const [
-                Center(child: Text("home")),
-                Center(child: Text("payment")),
-                BookingTab(),
-                ProfileTab(),
+              children: [
+                const HomeTab(),
+                BookingTab(HomelayoutBloc.get(context)),
+                const ProfileTab(),
               ],
               onPageChanged: (index) {
                 setState(() {
@@ -68,13 +70,6 @@ class _HomeLayoutState extends State<HomeLayout> {
                 BottomNavigationBarItem(
                   icon: Icon(
                     Icons.home,
-                    size: 30.r,
-                  ),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.payment,
                     size: 30.r,
                   ),
                   label: '',

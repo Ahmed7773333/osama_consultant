@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 part of 'homelayout_bloc.dart';
 
 abstract class HomelayoutState extends Equatable {
@@ -8,6 +10,8 @@ abstract class HomelayoutState extends Equatable {
 }
 
 class HomelayoutInitial extends HomelayoutState {}
+
+class HomelayoutLoading extends HomelayoutState {}
 
 class DatePickedState extends HomelayoutState {
   final DateTime date;
@@ -69,4 +73,16 @@ class BookingConfirmedState extends HomelayoutState {
   @override
   List<Object> get props =>
       [meetingDateTime, meetingDuration, notificationDuration];
+}
+
+class GeetingAllUserSuccessState extends HomelayoutState {
+  List<ScheduleModel> scedules;
+  GeetingAllUserSuccessState(this.scedules);
+}
+
+class GeetingbyIdUserSuccessState extends HomelayoutState {}
+
+class GettingErrorUserState extends HomelayoutState {
+  Failures l;
+  GettingErrorUserState(this.l);
 }

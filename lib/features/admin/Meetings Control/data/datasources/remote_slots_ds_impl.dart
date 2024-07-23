@@ -9,6 +9,7 @@ import 'package:osama_consul/features/admin/Meetings%20Control/data/models/add_s
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
 
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/id_schedule_model.dart';
+import 'package:osama_consul/features/admin/Meetings%20Control/data/models/id_slot_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/api/end_points.dart';
@@ -55,6 +56,22 @@ class RemoteSlotsDsImpl extends RemoteSlotsDs {
           body: slot.toMap());
       debugPrint('here');
       AddSlotModel userModel = AddSlotModel.fromJson(response.data);
+      return Right(userModel);
+    } catch (e) {
+      return left(RemoteFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failures, IdSlotModel>> getSlotById(int id) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      Response response = await apiManager.getDataa(
+        '${EndPoints.slots}/$id',
+        data: {'Authorization': 'Bearer ${prefs.getString('token')}'},
+      );
+      debugPrint('here');
+      IdSlotModel userModel = IdSlotModel.fromJson(response.data);
       return Right(userModel);
     } catch (e) {
       return left(RemoteFailure(message: e.toString()));

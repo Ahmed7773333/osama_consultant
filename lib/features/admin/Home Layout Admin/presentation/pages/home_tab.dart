@@ -23,12 +23,6 @@ class HomeTab extends StatelessWidget {
       {
         'title': 'Ask your doctor',
         'icon': Icons.local_hospital,
-        'onTab': () {}
-      },
-      {'title': 'Customer Service', 'icon': Icons.call, 'onTab': () {}},
-      {
-        'title': 'Account Settings',
-        'icon': Icons.settings,
         'onTab': () async {
           await removeUserData();
           Navigator.pushNamedAndRemoveUntil(
@@ -38,7 +32,21 @@ class HomeTab extends StatelessWidget {
           );
         }
       },
-      {'title': 'Services', 'icon': Icons.design_services, 'onTab': () {}}
+      {'title': 'Customer Service', 'icon': Icons.call, 'onTab': () {}},
+      {
+        'title': 'Account Settings',
+        'icon': Icons.settings,
+        'onTab': () {
+          Navigator.pushNamed(context, Routes.settings);
+        }
+      },
+      {
+        'title': 'Requests',
+        'icon': Icons.request_page,
+        'onTab': () {
+          Navigator.pushNamed(context, Routes.requestsPage);
+        }
+      }
     ];
 
     return Scaffold(

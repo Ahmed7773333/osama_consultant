@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
 
 import '../../../../../core/utils/app_styles.dart';
 import 'booking tabs/chat_booking.dart';
 import 'booking tabs/meeting_booking.dart';
 
 class BookingTab extends StatefulWidget {
-  const BookingTab({super.key});
-
+  const BookingTab(this.bloc, {super.key});
+  final HomelayoutBloc bloc;
   @override
   State<BookingTab> createState() => _BookingTabState();
 }
@@ -17,10 +18,6 @@ class _BookingTabState extends State<BookingTab>
   late TabController _tabController;
   late PageController _pageController;
   int curruntIndex = 0;
-  final List<Widget> pages = [
-    const MeetingBooking(),
-    const ChatBooking(),
-  ];
   @override
   void initState() {
     super.initState();
@@ -80,7 +77,10 @@ class _BookingTabState extends State<BookingTab>
             width: double.infinity,
             child: PageView(
               controller: _pageController,
-              children: pages,
+              children: [
+                MeetingBooking(widget.bloc),
+                const ChatBooking(),
+              ],
               onPageChanged: (index) {
                 _tabController.animateTo(index);
               },

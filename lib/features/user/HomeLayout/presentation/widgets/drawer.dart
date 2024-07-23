@@ -32,9 +32,10 @@ Widget drrawer(context, name, phone) {
         ),
         ListTile(
           leading: const Icon(Icons.payment),
-          title: const Text('Payments'),
+          title: const Text('My Requests'),
           onTap: () {
             // Handle navigation
+            Navigator.pushNamed(context, Routes.myRequests);
           },
         ),
         ListTile(
@@ -69,7 +70,7 @@ Widget drrawer(context, name, phone) {
           leading: const Icon(Icons.settings),
           title: const Text('Settings'),
           onTap: () {
-            // Handle navigation
+            Navigator.pushNamed(context, Routes.settings);
           },
         ),
         ListTile(

@@ -4,7 +4,6 @@ import '../utils/constants.dart';
 
 class ApiManager {
   Dio dio = Dio();
-
   Future<Response> getData(String endPoint, {Map<String, dynamic>? data}) {
     return dio.get(Constants.basURl + endPoint, queryParameters: data);
   }
@@ -24,6 +23,13 @@ class ApiManager {
     final options = Options(headers: data);
 
     return dio.post(Constants.basURl + endPoint, data: body, options: options);
+  }
+
+  Future<Response> payData(String endPoint,
+      {Map<String, dynamic>? body, Map<String, dynamic>? data}) {
+    final options = Options(headers: data);
+
+    return dio.post(Constants.payUrl + endPoint, data: body, options: options);
   }
 
   Future<Response> deleteData(String endPoint, {Map<String, dynamic>? data}) {

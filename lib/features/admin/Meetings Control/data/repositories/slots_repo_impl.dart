@@ -4,6 +4,7 @@ import 'package:osama_consul/features/admin/Meetings%20Control/data/datasources/
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/add_slot.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/id_schedule_model.dart';
+import 'package:osama_consul/features/admin/Meetings%20Control/data/models/id_slot_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/repositories/slots_repo.dart';
 
 class SlotsRepoImpl extends SlotsRepo {
@@ -22,5 +23,10 @@ class SlotsRepoImpl extends SlotsRepo {
   @override
   Future<Either<Failures, IdScheduleModel>> getScheduleById(int id) {
     return remoteSlotsDs.getScheduleById(id);
+  }
+
+  @override
+  Future<Either<Failures, IdSlotModel>> getSlotById(int id) {
+    return remoteSlotsDs.getSlotById(id);
   }
 }

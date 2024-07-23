@@ -26,5 +26,7 @@ class AppStrings {
   //booking
   static const String selectDay = 'Available Days';
   static const String selectTime = 'Available Times';
+  static const String slotDetails = 'Slot Details';
+
   static const String selectNotifyTime = 'Whould You like us to remind you?';
 }

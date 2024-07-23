@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/Registraion/data/models/user_model.dart';
+import '../../features/general/Registraion/data/models/user_model.dart';
 
 Future<void> saveUserData(Data userData) async {
   final prefs = await SharedPreferences.getInstance();
