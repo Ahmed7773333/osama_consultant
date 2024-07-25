@@ -18,10 +18,10 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
 
   @override
   Future<Either<Failures, UserModel>> signIn(
-      String email, String password) async {
+      String email, String password, String fcm) async {
     try {
       Response response = await apiManager.postData(EndPoints.login,
-          body: {"email": email, "password": password});
+          body: {"email": email, "password": password, 'fcm_token': fcm});
 
       UserModel userModel = UserModel.fromJson(response.data);
       await FirebaseHelper().makeCustomerChat(userModel);
@@ -33,16 +33,24 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
 
   @override
   Future<Either<Failures, UserModel>> signUP(String email, String password,
-      String name, String phone, String rePassword) async {
+      String name, String phone, String rePassword, String fcm) async {
     try {
+      debugPrint('here');
+      debugPrint(email);
+      debugPrint(password);
+      debugPrint(name);
+      debugPrint(phone);
+      debugPrint(rePassword);
+      debugPrint(fcm);
       Response response = await apiManager.postData(EndPoints.signup, body: {
         "name": name,
         "email": email,
         "phone": phone,
         "password": password,
-        "c_password": rePassword
+        "c_password": rePassword,
+        "fcm_token": fcm
       });
-      debugPrint('here');
+
       UserModel userModel = UserModel.fromJson(response.data);
       await FirebaseHelper().makeCustomerChat(userModel);
       return Right(userModel);

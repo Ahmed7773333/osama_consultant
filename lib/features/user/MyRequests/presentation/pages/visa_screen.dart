@@ -33,6 +33,18 @@ class _VisaScreenState extends State<VisaScreen> {
           },
           onPageFinished: (String url) {
             debugPrint('Page finished loading: $url');
+            Uri uri = Uri.parse(url);
+            if (uri.queryParameters.length == 35) {
+              try {
+                Map<String, dynamic> queryParams =
+                    Map<String, dynamic>.from(uri.queryParameters);
+                debugPrint('$queryParams');
+                queryParams['meeting_id'] = 2;
+                widget.cubit.sendTransaction(queryParams);
+              } catch (e) {
+                debugPrint(e.toString());
+              }
+            }
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('Error occurred: $error');

@@ -104,4 +104,14 @@ class MyrequestsCubit extends Cubit<MyrequestsState> {
       emit(ErrorReferenceCodePaymentState());
     });
   }
+
+  void sendTransaction(Map<String, dynamic> map) {
+    emit(LoadingSendTransactionState());
+    ApiManager().postDataa("/api/paymob/transaction", body: map).then((value) {
+      emit(SuccessSendTransactionState());
+    }).catchError((error) {
+      debugPrint(error.toString());
+      emit(ErrorSendTransactionState());
+    });
+  }
 }

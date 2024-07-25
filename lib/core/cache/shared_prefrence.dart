@@ -11,6 +11,7 @@ Future<void> saveUserData(Data userData) async {
 
   await prefs.setInt('is_admin', userData.isAdmin ?? 0);
   await prefs.setString('created_at', userData.createdAt ?? '');
+  await prefs.setString('fcm_token', userData.fcm ?? '');
 }
 
 Future<void> removeUserData() async {
@@ -19,6 +20,7 @@ Future<void> removeUserData() async {
   await prefs.remove('name');
   await prefs.remove('email');
   await prefs.remove('phone');
+  await prefs.remove('fcm_token');
 
   await prefs.remove('is_admin');
   await prefs.remove('created_at');

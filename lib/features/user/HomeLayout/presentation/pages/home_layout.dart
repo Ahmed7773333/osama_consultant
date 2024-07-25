@@ -31,7 +31,6 @@ class _HomeLayoutState extends State<HomeLayout> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<HomelayoutBloc>()
-        ..add(GetNotificationsEvent())
         ..add(GetAllSchedulesUserEvent())
         ..add(GetScheduleByIdUserEvent(1)),
       child: BlocConsumer<HomelayoutBloc, HomelayoutState>(

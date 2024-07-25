@@ -9,6 +9,7 @@ class SignInUseCase {
 
   SignInUseCase(this.authRepo);
 
-  Future<Either<Failures, UserModel>> call(String email, String password) =>
-      authRepo.signIn(email, password);
+  Future<Either<Failures, UserModel>> call(
+          String email, String password, String fcm) =>
+      authRepo.signIn(email, password, fcm);
 }

@@ -10,19 +10,15 @@ class AuthRepoImpl implements AuthRepo {
   AuthRepoImpl(this.authRmoteDs);
 
   @override
-  Future<Either<Failures, UserModel>> signIn(String email, String password) {
-    return authRmoteDs.signIn(email, password);
+  Future<Either<Failures, UserModel>> signIn(
+      String email, String password, String fcm) {
+    return authRmoteDs.signIn(email, password, fcm);
   }
 
   @override
-  Future<Either<Failures, UserModel>> signUP(
-    String email,
-    String password,
-    String name,
-    String phone,
-    String repassword,
-  ) {
-    return authRmoteDs.signUP(email, password, name, phone, repassword);
+  Future<Either<Failures, UserModel>> signUP(String email, String password,
+      String name, String phone, String repassword, String fcm) {
+    return authRmoteDs.signUP(email, password, name, phone, repassword, fcm);
   }
 
   @override

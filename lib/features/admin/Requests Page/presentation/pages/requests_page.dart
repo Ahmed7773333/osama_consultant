@@ -21,14 +21,14 @@ class RequestsPage extends StatelessWidget {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check,
                     color: Colors.green,
                   ),
                   SizedBox(
                     width: 10.w,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.close,
                     color: Colors.red,
                   )

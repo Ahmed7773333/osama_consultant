@@ -32,3 +32,9 @@ class LoadingReferenceCodePaymentState extends MyrequestsState {}
 class SuccessReferenceCodePaymentState extends MyrequestsState {}
 
 class ErrorReferenceCodePaymentState extends MyrequestsState {}
+
+class LoadingSendTransactionState extends MyrequestsState {}
+
+class SuccessSendTransactionState extends MyrequestsState {}
+
+class ErrorSendTransactionState extends MyrequestsState {}

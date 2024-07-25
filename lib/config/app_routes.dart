@@ -53,7 +53,7 @@ class RouteGenerator {
       case Routes.manageTimes:
         return MaterialPageRoute(builder: (_) => const MettingsControl());
       case Routes.settings:
-        return MaterialPageRoute(builder: (_) => SettingsScreen());
+        return MaterialPageRoute(builder: (_) => const SettingsScreen());
       case Routes.requestsPage:
         return MaterialPageRoute(builder: (_) => const RequestsPage());
       case Routes.visaScreen:

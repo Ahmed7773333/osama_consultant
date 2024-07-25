@@ -1,16 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:osama_consul/config/app_routes.dart';
-import 'package:osama_consul/core/network/firebase_helper.dart';
-// import 'package:osama_consul/features/admin/Home%20Layout%20Admin/data/models/chat_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzz;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../features/user/HomeLayout/data/models/message.dart';
 import '../../my_app.dart';
 
 class NotificationService {
@@ -23,8 +16,15 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
+  Future<String?> getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    String? token = await messaging.getToken();
+    return token;
+  }
+
   Future<void> init() async {
     pref = await SharedPreferences.getInstance();
+    debugPrint(pref.getString('fcm_token'));
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
@@ -34,18 +34,16 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      // onDidReceiveBackgroundNotificationResponse: (payload) async {
-      //   if (pref.getString('name') != null) {
-      //     Navigator.of(MyApp.navigatorKey.currentContext!)
-      //         .pushNamed(Routes.chatScreenAdmin, arguments: {
-      //       'id': ChatModel(
-      //           chatName: pref.getString('name') ?? '',
-      //           chatOwner: pref.getString('email') ?? ''),
-      //       'isadmin': false
-      //     });
-      //   }
-      // },
+      onDidReceiveNotificationResponse: (NotificationResponse response) async {
+        if (response.payload != null) {
+          // Navigate to the appropriate screen based on payload
+          Navigator.of(MyApp.navigatorKey.currentContext!).pushNamed(
+            response.payload!,
+          );
+        }
+      },
     );
+
     tzz.initializeTimeZones();
 
     NotificationSettings settings = await firebaseMessaging.requestPermission(
@@ -82,6 +80,17 @@ class NotificationService {
         message.data['route'],
       );
     });
+
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
+    await SharedPreferences.getInstance();
+    debugPrint("Handling a background message: ${message.messageId}");
+    NotificationService notificationService = NotificationService();
+    notificationService.showNotification(
+        0, message.data['title'].toString(), message.data['body'].toString());
   }
 
   Future<void> zonedScheduleNotification(
@@ -137,32 +146,5 @@ class NotificationService {
       body,
       platformChannelSpecifics,
     );
-  }
-
-  void listenToFirestoreChanges(id) {
-    FirebaseFirestore.instance
-        .collection(FirebaseHelper.chatCollection)
-        .doc(id)
-        .collection(FirebaseHelper.messagesCollection)
-        .orderBy(FirebaseHelper.time, descending: false)
-        .snapshots()
-        .listen((snapshot) {
-      if ((pref.getInt('lengthOfMessages') ?? 0) < snapshot.docs.length &&
-          MessageModel.fromDocument(snapshot.docs.last).senderId != id) {
-        MessageModel messageData =
-            MessageModel.fromDocument(snapshot.docs.last);
-        showNotification(
-          0,
-          messageData.senderId,
-          messageData.text ?? '',
-        );
-        pref.setInt('lengthOfMessages', snapshot.docs.length);
-      }
-    });
-  }
-
-  Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    debugPrint("Handling a background message: ${message.messageId}");
-    // Handle background message logic here if needed
   }
 }

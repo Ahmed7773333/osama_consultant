@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:osama_consul/core/cache/notification_service.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/id_slot_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_slot_by_id.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/eror/failuers.dart';
 import '../../../../admin/Meetings Control/data/models/all_schedules_model.dart';
@@ -39,16 +37,6 @@ class HomelayoutBloc extends Bloc<HomelayoutEvent, HomelayoutState> {
       if (event is PickDateEvent) {
         _selectedDate = event.date;
         emit(DatePickedState(event.date));
-      } else if (event is GetNotificationsEvent) {
-        try {
-          SharedPreferences pref = await SharedPreferences.getInstance();
-          id = pref.getString('email') ?? '';
-          NotificationService().listenToFirestoreChanges(id);
-
-          emit(ChatLoaded());
-        } catch (e) {
-          emit(ChatError(e.toString()));
-        }
       } else if (event is PickTimeEvent) {
         _selectedTime = event.time;
         emit(TimePickedState(event.time));
@@ -89,7 +77,7 @@ class HomelayoutBloc extends Bloc<HomelayoutEvent, HomelayoutState> {
         emit(HomelayoutLoading());
         var result = await getAllSchedules();
         result.fold((l) {
-          print(l.message);
+          debugPrint(l.message);
 
           emit(GettingErrorUserState(l));
         }, (r) {
@@ -112,7 +100,7 @@ class HomelayoutBloc extends Bloc<HomelayoutEvent, HomelayoutState> {
 
         var result = await getSlotById(event.id);
         result.fold((l) {
-          print(l.message);
+          debugPrint(l.message);
           emit(GettingErrorUserState(l));
         }, (r) {
           selectedTime = (r.data?.id ?? 1) - 1;
