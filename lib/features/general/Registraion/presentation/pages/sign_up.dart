@@ -4,7 +4,6 @@ import 'package:country_pickers/country_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
@@ -70,10 +69,8 @@ class _SignUpPageState extends State<SignUpPage> {
               );
               debugPrint(state.l.message);
             } else if (state is AuthSuccess) {
-              await saveUserData(state.user.data!);
-              final prefs = await SharedPreferences.getInstance();
-
-              final isAdmin = prefs.getInt('is_admin');
+              await UserPreferences.saveUserData(state.user.data!);
+              final isAdmin = await UserPreferences.getIsAdmin();
 
               Navigator.pop(context);
 

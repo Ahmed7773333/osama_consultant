@@ -17,13 +17,13 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
   AuthRemoteDSImpl(this.apiManager);
 
   @override
-  Future<Either<Failures, UserModel>> signIn(
+  Future<Either<Failures, AuthResponseModel>> signIn(
       String email, String password, String fcm) async {
     try {
       Response response = await apiManager.postData(EndPoints.login,
           body: {"email": email, "password": password, 'fcm_token': fcm});
 
-      UserModel userModel = UserModel.fromJson(response.data);
+      AuthResponseModel userModel = AuthResponseModel.fromJson(response.data);
       await FirebaseHelper().makeCustomerChat(userModel);
       return Right(userModel);
     } catch (e) {
@@ -32,8 +32,13 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
   }
 
   @override
-  Future<Either<Failures, UserModel>> signUP(String email, String password,
-      String name, String phone, String rePassword, String fcm) async {
+  Future<Either<Failures, AuthResponseModel>> signUP(
+      String email,
+      String password,
+      String name,
+      String phone,
+      String rePassword,
+      String fcm) async {
     try {
       debugPrint('here');
       debugPrint(email);
@@ -51,7 +56,7 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
         "fcm_token": fcm
       });
 
-      UserModel userModel = UserModel.fromJson(response.data);
+      AuthResponseModel userModel = AuthResponseModel.fromJson(response.data);
       await FirebaseHelper().makeCustomerChat(userModel);
       return Right(userModel);
     } catch (e) {
@@ -60,7 +65,7 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
   }
 
   @override
-  Future<Either<Failures, UserModel>> signInGoogle() async {
+  Future<Either<Failures, AuthResponseModel>> signInGoogle() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
@@ -81,8 +86,8 @@ class AuthRemoteDSImpl implements AuthRmoteDs {
       final UserCredential userCredential =
           await auth.signInWithCredential(credential);
       final User? user = userCredential.user;
-      UserModel userr = UserModel(
-          data: Data(
+      AuthResponseModel userr = AuthResponseModel(
+          data: UserModel(
               token: user?.uid,
               name: user?.displayName,
               email: user?.email,

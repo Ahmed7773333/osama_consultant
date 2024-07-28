@@ -11,43 +11,17 @@ abstract class HomelayoutState extends Equatable {
 
 class HomelayoutInitial extends HomelayoutState {}
 
+class LogoutLoadingState extends HomelayoutState {}
+
+class LogoutErrorState extends HomelayoutState {}
+
+class LogoutSuccessState extends HomelayoutState {}
+
 class HomelayoutLoading extends HomelayoutState {}
 
-class DatePickedState extends HomelayoutState {
-  final DateTime date;
+class GetSlotByIdUserLoading extends HomelayoutState {}
 
-  const DatePickedState(this.date);
-
-  @override
-  List<Object> get props => [date];
-}
-
-class TimePickedState extends HomelayoutState {
-  final TimeOfDay time;
-
-  const TimePickedState(this.time);
-
-  @override
-  List<Object> get props => [time];
-}
-
-class DurationPickedState extends HomelayoutState {
-  final Duration duration;
-
-  const DurationPickedState(this.duration);
-
-  @override
-  List<Object> get props => [duration];
-}
-
-class NotificationDurationPickedState extends HomelayoutState {
-  final Duration duration;
-
-  const NotificationDurationPickedState(this.duration);
-
-  @override
-  List<Object> get props => [duration];
-}
+class GetScheduleByIdUserLoading extends HomelayoutState {}
 
 class ChatLoaded extends HomelayoutState {}
 
@@ -59,20 +33,16 @@ class ChatError extends HomelayoutState {
   List<Object> get props => [error];
 }
 
-class BookingConfirmedState extends HomelayoutState {
-  final DateTime meetingDateTime;
-  final Duration meetingDuration;
-  final Duration notificationDuration;
+class BookingConfirmedLoadingState extends HomelayoutState {}
 
-  const BookingConfirmedState(
-    this.meetingDateTime,
-    this.meetingDuration,
-    this.notificationDuration,
-  );
+class BookingConfirmedState extends HomelayoutState {}
+
+class BookingConfirmedErrorState extends HomelayoutState {
+  final Failures error;
+  const BookingConfirmedErrorState(this.error);
 
   @override
-  List<Object> get props =>
-      [meetingDateTime, meetingDuration, notificationDuration];
+  List<Object> get props => [error];
 }
 
 class GeetingAllUserSuccessState extends HomelayoutState {
@@ -80,7 +50,9 @@ class GeetingAllUserSuccessState extends HomelayoutState {
   GeetingAllUserSuccessState(this.scedules);
 }
 
-class GeetingbyIdUserSuccessState extends HomelayoutState {}
+class GetScheduleByIdUserSuccessState extends HomelayoutState {}
+
+class GetSlotByIdUserSuccessState extends HomelayoutState {}
 
 class GettingErrorUserState extends HomelayoutState {
   Failures l;

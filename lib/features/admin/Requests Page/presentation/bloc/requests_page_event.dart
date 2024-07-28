@@ -6,3 +6,5 @@ abstract class RequestsPageEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class GetAllRequestsAdminEvent extends RequestsPageEvent {}

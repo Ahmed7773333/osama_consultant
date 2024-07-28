@@ -1,13 +1,16 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:osama_consul/core/api/api_manager.dart';
+import 'package:osama_consul/core/api/end_points.dart';
+import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tzz;
 import '../../my_app.dart';
 
 class NotificationService {
-  late SharedPreferences pref;
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
   NotificationService._internal();
@@ -22,9 +25,20 @@ class NotificationService {
     return token;
   }
 
+  Future<void> pushNotification(String title, String body, String email) async {
+    try {
+      await ApiManager().postDataa(
+        EndPoints.sendNotification,
+        data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
+        body: {'title': title, 'body': body, 'email': email},
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
   Future<void> init() async {
-    pref = await SharedPreferences.getInstance();
-    debugPrint(pref.getString('fcm_token'));
+    debugPrint(await UserPreferences.getFcmToken());
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initializationSettings =
@@ -73,24 +87,6 @@ class NotificationService {
         );
       }
     });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint('A new onMessageOpenedApp event was published!');
-      Navigator.of(MyApp.navigatorKey.currentContext!).pushNamed(
-        message.data['route'],
-      );
-    });
-
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  }
-
-  static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    await SharedPreferences.getInstance();
-    debugPrint("Handling a background message: ${message.messageId}");
-    NotificationService notificationService = NotificationService();
-    notificationService.showNotification(
-        0, message.data['title'].toString(), message.data['body'].toString());
   }
 
   Future<void> zonedScheduleNotification(
@@ -141,10 +137,7 @@ class NotificationService {
       android: androidPlatformChannelSpecifics,
     );
     await flutterLocalNotificationsPlugin.show(
-      id,
-      title,
-      body,
-      platformChannelSpecifics,
-    );
+        id, title, body.split('/').first, platformChannelSpecifics,
+        payload: body.split('/').last);
   }
 }

@@ -157,7 +157,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       onPressed: () async {
                         if (!bloc!.isRecording) {
                           await sendMessage(bloc!.filePath, _controller,
-                              context, widget.id.chatOwner);
+                              context, widget.id.chatOwner, widget.fromAdmin);
                           bloc!.add(DeleteFilePathEvent());
                         }
                       },

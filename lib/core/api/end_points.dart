@@ -2,6 +2,8 @@ class EndPoints {
   //Authentication
   static const String login = '/api/login';
   static const String signup = '/api/register';
+  static const String logout = '/api/logout';
+
   //get schedules and slots
   static const String schedules = '/api/schedules';
   static const String slots = '/api/slots';
@@ -9,4 +11,8 @@ class EndPoints {
   static const String getToken = '/auth/tokens';
   static const String getOrderId = '/ecommerce/orders';
   static const String getRequestToken = '/acceptance/payment_keys';
+  //notification
+  static const String sendNotification = '/api/fcm/push';
+  //confirmBooking
+  static const String confirmBooking = '/api/meetings';
 }

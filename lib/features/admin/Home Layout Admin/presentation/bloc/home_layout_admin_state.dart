@@ -36,3 +36,9 @@ class ErrorState extends HomeLayoutAdminState {
 }
 
 class SccussState extends HomeLayoutAdminState {}
+
+class LogoutAdminLoadingState extends HomeLayoutAdminState {}
+
+class LogoutAdminErrorState extends HomeLayoutAdminState {}
+
+class LogoutAdminSuccessState extends HomeLayoutAdminState {}

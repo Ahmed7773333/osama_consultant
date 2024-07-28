@@ -9,6 +9,12 @@ abstract class MyrequestsState extends Equatable {
 
 class MyrequestsInitial extends MyrequestsState {}
 
+class LoadingMyRequestsState extends MyrequestsState {}
+
+class SuccessMyRequestState extends MyrequestsState {}
+
+class ErrorMyRequestState extends MyrequestsState {}
+
 class LoadingAuthTokenPaymentState extends MyrequestsState {}
 
 class SuccessAuthTokenPaymentState extends MyrequestsState {}

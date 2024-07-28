@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/utils/get_itt.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/tabs/booking%20tabs/meeting_booking.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/tabs/home.dart';
 
+import '../../../../../config/app_routes.dart';
 import '../bloc/homelayout_bloc.dart';
-import '../tabs/booking.dart';
 import '../tabs/profile.dart';
 
 class HomeLayout extends StatefulWidget {
@@ -34,7 +35,15 @@ class _HomeLayoutState extends State<HomeLayout> {
         ..add(GetAllSchedulesUserEvent())
         ..add(GetScheduleByIdUserEvent(1)),
       child: BlocConsumer<HomelayoutBloc, HomelayoutState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is LogoutSuccessState) {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.signUp,
+              (Route<dynamic> route) => false,
+            );
+          }
+        },
         builder: (context, state) {
           // final HomelayoutBloc bloc = HomelayoutBloc.get(context);
           return Scaffold(
@@ -42,8 +51,8 @@ class _HomeLayoutState extends State<HomeLayout> {
               controller: _pageController,
               children: [
                 const HomeTab(),
-                BookingTab(HomelayoutBloc.get(context)),
-                const ProfileTab(),
+                MeetingBooking(HomelayoutBloc.get(context)),
+                ProfileTab(HomelayoutBloc.get(context)),
               ],
               onPageChanged: (index) {
                 setState(() {

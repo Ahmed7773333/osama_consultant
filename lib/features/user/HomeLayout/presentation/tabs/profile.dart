@@ -3,17 +3,17 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
+import '../../../../../core/cache/shared_prefrence.dart';
 import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../widgets/drawer.dart';
 import '../widgets/profile_textfield.dart';
 
 class ProfileTab extends StatefulWidget {
-  const ProfileTab({super.key});
-
+  const ProfileTab(this.bloc, {super.key});
+  final HomelayoutBloc bloc;
   @override
   State<ProfileTab> createState() => _ProfileTabState();
 }
@@ -37,12 +37,10 @@ class _ProfileTabState extends State<ProfileTab> {
   }
 
   Future<void> _loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
+    namee = (await UserPreferences.getName()) ?? '';
+    emaill = (await UserPreferences.getEmail()) ?? '';
+    phonee = (await UserPreferences.getPhone()) ?? '';
     setState(() {
-      namee = prefs.getString('name') ?? '';
-      emaill = prefs.getString('email') ?? '';
-      phonee = prefs.getString('phone') ?? '';
-
       name = TextEditingController(text: namee);
       email = TextEditingController(text: emaill);
       phone = TextEditingController(text: phonee);
@@ -143,7 +141,7 @@ class _ProfileTabState extends State<ProfileTab> {
           ],
         ),
       ),
-      drawer: drrawer(context, namee, phonee),
+      drawer: drrawer(context, namee, phonee, widget.bloc),
       body: Padding(
         padding: EdgeInsets.all(16.r),
         child: Column(

@@ -9,5 +9,5 @@ class SignInGoogleUseCase {
 
   SignInGoogleUseCase(this.authRepo);
 
-  Future<Either<Failures, UserModel>> call() => authRepo.signInGoogle();
+  Future<Either<Failures, AuthResponseModel>> call() => authRepo.signInGoogle();
 }

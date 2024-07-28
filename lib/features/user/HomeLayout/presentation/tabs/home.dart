@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:osama_consul/core/cache/shared_prefrence.dart';
 
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../../core/utils/assets.dart';
@@ -11,6 +12,18 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  String name = '';
+  @override
+  void initState() {
+    setName();
+    super.initState();
+  }
+
+  void setName() async {
+    name = (await UserPreferences.getName())!;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,11 +35,12 @@ class _HomeTabState extends State<HomeTab> {
             bottomRight: Radius.circular(25),
           ),
           child: AppBar(
+            automaticallyImplyLeading: false,
             title: Text(
-              'Hi Handwerker!',
+              'Hi $name!',
               style: AppStyles.welcomeSytle,
             ),
-            backgroundColor: const Color(0XFF07D9AD),
+            backgroundColor: Colors.green,
           ),
         ),
       ),
@@ -51,20 +65,6 @@ class _HomeTabState extends State<HomeTab> {
                     separatorBuilder: (context, index) {
                       return const SizedBox(
                         width: 1,
-                      );
-                    },
-                    itemCount: 6),
-              ),
-              SizedBox(
-                height: 100,
-                child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Image.asset(Assets.logo);
-                    },
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        width: 5,
                       );
                     },
                     itemCount: 6),

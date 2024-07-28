@@ -1,18 +1,18 @@
-class UserModel {
+class AuthResponseModel {
   bool? success;
-  Data? data;
+  UserModel? data;
   String? message;
 
-  UserModel({this.success, this.data, this.message});
+  AuthResponseModel({this.success, this.data, this.message});
 
-  UserModel.fromJson(Map<String, dynamic> json) {
+  AuthResponseModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? UserModel.fromJson(json['data']) : null;
     message = json['message'];
   }
 }
 
-class Data {
+class UserModel {
   String? token;
   int? id;
   String? name;
@@ -22,7 +22,7 @@ class Data {
   int? isAdmin;
   String? fcm;
 
-  Data(
+  UserModel(
       {this.token,
       this.id,
       this.name,
@@ -32,7 +32,7 @@ class Data {
       this.phone,
       this.fcm});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  UserModel.fromJson(Map<String, dynamic> json) {
     token = json['token'];
     id = json['id'];
     name = json['name'];

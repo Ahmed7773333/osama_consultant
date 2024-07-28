@@ -4,6 +4,7 @@ import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/c
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/home_layout_admin.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/pages/mettings_control.dart';
 import 'package:osama_consul/features/general/settings/presentation/pages/settings_screen.dart';
+import 'package:osama_consul/features/user/MyRequests/data/models/all_meeting_response.dart';
 import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
 import 'package:osama_consul/features/user/MyRequests/presentation/pages/my_requests.dart';
 import 'package:osama_consul/features/user/MyRequests/presentation/pages/payment_screen.dart';
@@ -63,7 +64,11 @@ class RouteGenerator {
       case Routes.myRequests:
         return MaterialPageRoute(builder: (_) => const MyRequests());
       case Routes.paymentScren:
-        return MaterialPageRoute(builder: (_) => const PaymentScreen());
+        final args = settings.arguments as Map<String, dynamic>;
+        final request = args['request'] as RequestModel;
+        final cubit = args['cubit'] as MyrequestsCubit;
+
+        return MaterialPageRoute(builder: (_) => PaymentScreen(request, cubit));
       default:
         return unDefinedScreen();
     }

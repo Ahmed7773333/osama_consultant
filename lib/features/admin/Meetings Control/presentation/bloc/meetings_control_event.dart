@@ -20,3 +20,8 @@ class AddSlotEvent extends MeetingsControlEvent {
   SlotToAdd slot;
   AddSlotEvent(this.slot);
 }
+
+class GetSlotByIdEvent extends MeetingsControlEvent {
+  int id;
+  GetSlotByIdEvent(this.id);
+}

@@ -9,3 +9,5 @@ abstract class HomeLayoutAdminEvent extends Equatable {
 }
 
 class GetChatsEvent extends HomeLayoutAdminEvent {}
+
+class LogoutAdminEvent extends HomeLayoutAdminEvent {}

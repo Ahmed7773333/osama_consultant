@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:osama_consul/core/cache/shared_prefrence.dart';
 
 import '../../features/user/HomeLayout/data/models/message.dart';
 
@@ -65,11 +65,9 @@ class FirebaseHelper {
 
   Future<void> sendMessage(id, text, {String? audioUrl}) async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-
       final message = MessageModel(
         text: text,
-        senderId: pref.getString('email')!,
+        senderId: (await UserPreferences.getEmail())!,
         timestamp: Timestamp.now(),
         audioUrl: audioUrl,
       );

@@ -4,24 +4,41 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:osama_consul/core/api/api_manager.dart';
 import 'package:osama_consul/core/api/end_points.dart';
 import 'package:osama_consul/core/utils/constants.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:osama_consul/features/user/MyRequests/data/models/all_meeting_response.dart';
+import 'package:osama_consul/features/user/MyRequests/domain/usecases/get_all_requests.dart';
+
+import '../../../../../core/cache/shared_prefrence.dart';
 
 part 'myrequests_state.dart';
 
 class MyrequestsCubit extends Cubit<MyrequestsState> {
-  MyrequestsCubit() : super(MyrequestsInitial());
+  MyrequestsCubit(this.getAllRequestsUseCase) : super(MyrequestsInitial());
   static MyrequestsCubit get(context) => BlocProvider.of(context);
+  GetAllRequestsUseCase getAllRequestsUseCase;
   String authToken = '';
   String orderId = '';
   String requestToken = '';
   String refCode = '';
+  int trg = 0;
+  List<RequestModel> allRequests = [];
+  Future<void> getAllRequests() async {
+    emit(LoadingMyRequestsState());
+    var result = await getAllRequestsUseCase();
+    result.fold((l) {
+      emit(ErrorMyRequestState());
+    }, (r) {
+      allRequests = r;
+      emit(SuccessMyRequestState());
+    });
+  }
+
   void getAuthToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String email = prefs.getString('email') ?? '';
-    String phone = prefs.getString('phone') ?? '';
-    String fName = prefs.getString('name') ?? '';
-    String lName = prefs.getString('name') ?? '';
+    String email = (await UserPreferences.getEmail()) ?? '';
+    String phone = (await UserPreferences.getPhone()) ?? '';
+    String fName = (await UserPreferences.getName()) ?? '';
+    String lName = (await UserPreferences.getName()) ?? '';
     String amount = '3000';
+    trg = 0;
     emit(LoadingAuthTokenPaymentState());
     ApiManager().payData(EndPoints.getToken,
         body: {"api_key": Constants.payApiKey}).then((value) {
@@ -108,6 +125,7 @@ class MyrequestsCubit extends Cubit<MyrequestsState> {
   void sendTransaction(Map<String, dynamic> map) {
     emit(LoadingSendTransactionState());
     ApiManager().postDataa("/api/paymob/transaction", body: map).then((value) {
+      trg = 1;
       emit(SuccessSendTransactionState());
     }).catchError((error) {
       debugPrint(error.toString());

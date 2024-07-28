@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:osama_consul/features/user/MyRequests/presentation/pages/success_page.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
@@ -36,11 +37,25 @@ class _VisaScreenState extends State<VisaScreen> {
             Uri uri = Uri.parse(url);
             if (uri.queryParameters.length == 35) {
               try {
-                Map<String, dynamic> queryParams =
-                    Map<String, dynamic>.from(uri.queryParameters);
-                debugPrint('$queryParams');
-                queryParams['meeting_id'] = 2;
-                widget.cubit.sendTransaction(queryParams);
+                debugPrint(uri.queryParameters['success']);
+                if (uri.queryParameters['success'] == 'true') {
+                  Map<String, dynamic> queryParams =
+                      Map<String, dynamic>.from(uri.queryParameters);
+                  debugPrint('$queryParams');
+                  queryParams['meeting_id'] = 6;
+                  if (widget.cubit.trg < 1) {
+                    widget.cubit.sendTransaction(queryParams);
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (c) => const PaymentCompletedPage()));
+                  }
+                } else if (uri.queryParameters['success'] == 'false') {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (c) => const PaymentDeclinedPage()));
+                }
               } catch (e) {
                 debugPrint(e.toString());
               }

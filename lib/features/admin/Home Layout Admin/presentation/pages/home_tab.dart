@@ -3,12 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/config/app_routes.dart';
-
-import '../../../../../core/cache/shared_prefrence.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
 
 class HomeTab extends StatelessWidget {
-  const HomeTab({super.key});
-
+  const HomeTab(this.bloc, {super.key});
+  final HomeLayoutAdminBloc bloc;
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> items = [
@@ -24,12 +23,7 @@ class HomeTab extends StatelessWidget {
         'title': 'Ask your doctor',
         'icon': Icons.local_hospital,
         'onTab': () async {
-          await removeUserData();
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            Routes.signUp,
-            (Route<dynamic> route) => false,
-          );
+          bloc.add(LogoutAdminEvent());
         }
       },
       {'title': 'Customer Service', 'icon': Icons.call, 'onTab': () {}},

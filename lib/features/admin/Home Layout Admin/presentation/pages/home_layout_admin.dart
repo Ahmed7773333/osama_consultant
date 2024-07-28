@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:osama_consul/core/utils/get_itt.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/chat_tab.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/home_tab.dart';
+
+import '../../../../../config/app_routes.dart';
 
 class HomeLayoutAdmin extends StatefulWidget {
   const HomeLayoutAdmin(this.i, {super.key});
@@ -30,16 +33,24 @@ class _HomeLayoutAdminState extends State<HomeLayoutAdmin> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeLayoutAdminBloc()..add(GetChatsEvent()),
+      create: (context) => sl<HomeLayoutAdminBloc>()..add(GetChatsEvent()),
       child: BlocConsumer<HomeLayoutAdminBloc, HomeLayoutAdminState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is LogoutAdminSuccessState) {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Routes.signUp,
+              (Route<dynamic> route) => false,
+            );
+          }
+        },
         builder: (context, state) {
           return Scaffold(
             body: PageView(
               controller: _pageController,
-              children: const [
-                HomeTab(),
-                ChatTab(),
+              children: [
+                HomeTab(HomeLayoutAdminBloc.get(context)),
+                const ChatTab(),
               ],
               onPageChanged: (index) {
                 setState(() {

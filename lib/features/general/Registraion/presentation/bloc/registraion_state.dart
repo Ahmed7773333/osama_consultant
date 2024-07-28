@@ -20,7 +20,7 @@ class AuthError extends RegistraionState {
 }
 
 class AuthSuccess extends RegistraionState {
-  UserModel user;
+  AuthResponseModel user;
   AuthSuccess(
     this.user,
   );

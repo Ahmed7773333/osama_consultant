@@ -2,13 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:osama_consul/core/utils/app_strings.dart';
 import 'package:osama_consul/core/utils/app_styles.dart';
-import 'package:osama_consul/features/admin/Meetings%20Control/presentation/widgets/time_gridview.dart';
 
-import '../../../../../admin/Meetings Control/data/models/id_slot_model.dart';
+import '../../../../../../config/app_routes.dart';
+import '../../../../../../core/cache/shared_prefrence.dart';
+import '../../../../../admin/Home Layout Admin/data/models/chat_model.dart';
+import '../../../../../admin/Meetings Control/data/models/all_schedules_model.dart';
+import '../../../../MyRequests/presentation/widgets/functions.dart';
 import '../../bloc/homelayout_bloc.dart';
-import '../../widgets/booking_widgets.dart';
+import '../../widgets/gridview_times.dart';
 import '../../widgets/listview_days.dart';
 
 class MeetingBooking extends StatefulWidget {
@@ -20,27 +24,24 @@ class MeetingBooking extends StatefulWidget {
 }
 
 class _MeetingBookingState extends State<MeetingBooking> {
-  Duration? _notificationDuration;
-
-  void _pickNotificationDuration() async {
-    Duration? picked = await showDialog<Duration>(
-      context: context,
-      builder: (BuildContext context) {
-        return const DurationPickerDialog(
-          initialDuration: Duration(minutes: 5),
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        _notificationDuration = picked;
-      });
-    }
+  void navigateToChat() async {
+    Navigator.pushNamed(context, Routes.chatScreenAdmin, arguments: {
+      'id': ChatModel(
+          chatName: (await UserPreferences.getName()) ?? '',
+          chatOwner: (await UserPreferences.getEmail()) ?? ''),
+      'isadmin': false
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Book a Meeting',
+          style: AppStyles.greenLableStyle.copyWith(fontSize: 25.sp),
+        ),
+      ),
       body: Padding(
         padding: EdgeInsets.all(16.r),
         child: SingleChildScrollView(
@@ -55,7 +56,7 @@ class _MeetingBookingState extends State<MeetingBooking> {
               SizedBox(height: 20.h),
               Text(AppStrings.selectTime, style: AppStyles.greenLableStyle),
               SizedBox(height: 20.h),
-              gridViewTimes(widget.bloc.timesOfDay, widget.bloc),
+              gridViewTimesUser(widget.bloc.timesOfDay, widget.bloc),
               if (widget.bloc.slotDetails != null)
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -67,29 +68,23 @@ class _MeetingBookingState extends State<MeetingBooking> {
                       buildSlotCard(widget.bloc.slotDetails!),
                       SizedBox(height: 20.h),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          widget.bloc.add(ConfirmBookingEvent());
+                        },
                         child: Text('Send a Request',
                             style: TextStyle(fontSize: 20.sp)),
                       ),
+                      SizedBox(height: 20.h),
+                      Center(
+                        child: Text('OR', style: AppStyles.greenLableStyle),
+                      ),
+                      SizedBox(height: 20.h),
+                      ElevatedButton(
+                        onPressed: navigateToChat,
+                        child: Text('Proceed to Chat',
+                            style: TextStyle(fontSize: 20.sp)),
+                      ),
                     ]),
-              SizedBox(height: 20.h),
-              Text(AppStrings.selectNotifyTime,
-                  style: AppStyles.greenLableStyle),
-              ElevatedButton(
-                onPressed: _pickNotificationDuration,
-                child: Text(
-                  _notificationDuration == null
-                      ? 'Select Notification Time'
-                      : '${_notificationDuration!.inMinutes} minutes before',
-                  style: TextStyle(fontSize: 20.sp),
-                ),
-              ),
-              SizedBox(height: 50.h),
-              ElevatedButton(
-                onPressed: () {},
-                child:
-                    Text('Confirm Booking', style: TextStyle(fontSize: 20.sp)),
-              ),
             ],
           ),
         ),
@@ -97,30 +92,28 @@ class _MeetingBookingState extends State<MeetingBooking> {
     );
   }
 
-  Widget buildSlotCard(SlotIDModel slot) {
+  Widget buildSlotCard(SlotModel slot) {
+    DateTime time = DateTime.parse(getDateForDay(slot.scheduleId!));
+    String abbreviatedMonth = DateFormat('MMM').format(time).toUpperCase();
     return Card(
-      elevation: 5,
-      margin: EdgeInsets.symmetric(vertical: 10.h),
-      child: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('ID: ${slot.id}', style: TextStyle(fontSize: 16.sp)),
-            Text('Schedule ID: ${slot.scheduleId}',
-                style: TextStyle(fontSize: 16.sp)),
-            Text('From: ${slot.from}', style: TextStyle(fontSize: 16.sp)),
-            Text('To: ${slot.to}', style: TextStyle(fontSize: 16.sp)),
-            Text('Status: ${slot.status}', style: TextStyle(fontSize: 16.sp)),
-            Text('Created At: ${slot.createdAt}',
-                style: TextStyle(fontSize: 16.sp)),
-            Text('Updated At: ${slot.updatedAt}',
-                style: TextStyle(fontSize: 16.sp)),
-            if (slot.schedule != null)
-              Text('Schedule: ${slot.schedule!.dayName}',
-                  style: TextStyle(fontSize: 16.sp)),
-          ],
+      elevation: 20,
+      child: ListTile(
+        leading: Container(
+          height: 70.h,
+          width: 50.w,
+          decoration: ShapeDecoration(
+              color: Colors.green,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.r)))),
+          child: Center(
+            child: Text(
+              ' ${time.day}\n$abbreviatedMonth',
+              style: AppStyles.whiteLableStyle,
+            ),
+          ),
         ),
+        title: Text(DateFormat('EEEE').format(time)),
+        subtitle: Text(convertEgyptTimeToLocal(slot.from!)),
       ),
     );
   }
