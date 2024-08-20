@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,20 +50,22 @@ class _MettingsControlState extends State<MettingsControl> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(AppStrings.selectDay,
-                        style: AppStyles.greenLableStyle),
+                    Text(AppStrings.selectDay, style: AppStyles.redLableStyle),
                     SizedBox(height: 20.h),
                     daysListView(
-                        MeetingsControlBloc.get(context).daysOfWeek,
-                        MeetingsControlBloc.get(context),
-                        MeetingsControlBloc.get(context).selectedDay),
+                      MeetingsControlBloc.get(context).daysOfWeek,
+                      MeetingsControlBloc.get(context),
+                    ),
                     SizedBox(height: 20.h),
-                    Text(AppStrings.selectTime,
-                        style: AppStyles.greenLableStyle),
+                    Text(AppStrings.selectTime, style: AppStyles.redLableStyle),
                     SizedBox(height: 20.h),
-                    gridViewTimesAdmin(
-                        MeetingsControlBloc.get(context).timesOfDay,
-                        MeetingsControlBloc.get(context)),
+                    MeetingsControlBloc.get(context).slotDetails != null
+                        ? gridViewTimesAdmin(
+                            MeetingsControlBloc.get(context).timesOfDay,
+                            MeetingsControlBloc.get(context))
+                        : const Center(
+                            child: Text(
+                                'There is no available times in this day')),
                     SizedBox(height: 50.h),
                     ElevatedButton(
                       onPressed: () async {
@@ -89,7 +91,17 @@ class _MettingsControlState extends State<MettingsControl> {
                         }
                       },
                       child: Text('Add Time to this day',
-                          style: TextStyle(fontSize: 20.sp)),
+                          style:
+                              TextStyle(fontSize: 20.sp, color: Colors.white)),
+                    ),
+                    SizedBox(height: 50.h),
+                    ElevatedButton(
+                      onPressed: () {
+                        MeetingsControlBloc.get(context).add(DeleteSlotEvent());
+                      },
+                      child: Text('Delete The Selected Slot',
+                          style:
+                              TextStyle(fontSize: 20.sp, color: Colors.white)),
                     ),
                   ],
                 ),

@@ -12,13 +12,13 @@ class HomeLayoutAdminInitial extends HomeLayoutAdminState {}
 
 class LoadingState extends HomeLayoutAdminState {}
 
-class ChatsLoaded extends HomeLayoutAdminState {
-  final List<ChatModel> chats;
-  const ChatsLoaded(this.chats);
+class AllChatsSuccessState extends HomeLayoutAdminState {}
 
-  @override
-  List<Object> get props => [chats];
-}
+class AllChatsLoadingState extends HomeLayoutAdminState {}
+
+class UnReadChatsSuccessState extends HomeLayoutAdminState {}
+
+class UnReadChatsLoadingState extends HomeLayoutAdminState {}
 
 class ChatsError extends HomeLayoutAdminState {
   final String error;

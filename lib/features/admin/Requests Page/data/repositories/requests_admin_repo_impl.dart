@@ -12,4 +12,19 @@ class RequestsAdminRepoImpl extends RequestsAdminRepo {
   Future<Either<Failures, List<RequestModel>>> getAllRequests() {
     return remote.getAllRequests();
   }
+
+  @override
+  Future<void> acceptOrder(int id) {
+    return remote.acceptOrder(id);
+  }
+
+  @override
+  Future<void> rejectOrder(int id) {
+    return remote.rejectOrder(id);
+  }
+
+  @override
+  Future<void> generateToken(RequestModel r) {
+    return remote.generateToken(r);
+  }
 }

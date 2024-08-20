@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:osama_consul/core/eror/failuers.dart';
+import 'package:osama_consul/core/network/check_internet.dart';
 import 'package:osama_consul/core/network/firebase_helper.dart';
-import 'package:osama_consul/features/admin/Home%20Layout%20Admin/data/models/chat_model.dart';
+import 'package:osama_consul/features/general/Chat%20Screen/data/models/chat_model.dart';
 import 'package:osama_consul/features/user/HomeLayout/domain/usecases/logout.dart';
 
 part 'home_layout_admin_event.dart';
@@ -12,36 +13,59 @@ part 'home_layout_admin_state.dart';
 class HomeLayoutAdminBloc
     extends Bloc<HomeLayoutAdminEvent, HomeLayoutAdminState> {
   List<ChatModel> chats = [];
-
+  bool isAll = true;
+  int selected = 0;
   static HomeLayoutAdminBloc get(context) => BlocProvider.of(context);
   LogoutUseCase logoutUseCase;
   HomeLayoutAdminBloc(this.logoutUseCase) : super(HomeLayoutAdminInitial()) {
-    on<HomeLayoutAdminEvent>(_mapEventToState);
-  }
+    on<HomeLayoutAdminEvent>((event, emit) async {
+      if (event is GetAllChatsEvent) {
+        try {
+          emit(AllChatsLoadingState());
 
-  Future<void> _mapEventToState(
-      HomeLayoutAdminEvent event, Emitter<HomeLayoutAdminState> emit) async {
-    if (event is GetChatsEvent) {
-      await _getChatsEvent(emit);
-    } else if (event is LogoutAdminEvent) {
-      emit(LogoutAdminLoadingState());
-      await logoutUseCase().then((v) {
-        emit(LogoutAdminSuccessState());
-      }).catchError((e) {
-        emit(LogoutAdminErrorState());
-      });
-    }
-  }
+          bool isConnect = await ConnectivityService().getConnectionStatus();
+          if (isConnect) {
+            var snapshot = await FirebaseFirestore.instance
+                .collection(FirebaseHelper.chatCollection)
+                .get();
+            isAll = true;
+            selected = 0;
+            chats = snapshot.docs
+                .map((doc) => ChatModel.fromDocument(doc))
+                .toList();
+          }
+          emit(AllChatsSuccessState());
+        } catch (e) {
+          emit(ChatsError(e.toString()));
+        }
+      } else if (event is GetUnReadChatsEvent) {
+        try {
+          emit(UnReadChatsLoadingState());
+          bool isConnect = await ConnectivityService().getConnectionStatus();
 
-  Future<void> _getChatsEvent(Emitter<HomeLayoutAdminState> emit) async {
-    try {
-      var snapshot = await FirebaseFirestore.instance
-          .collection(FirebaseHelper.chatCollection)
-          .get();
-      chats = snapshot.docs.map((doc) => ChatModel.fromDocument(doc)).toList();
-      emit(ChatsLoaded(chats));
-    } catch (e) {
-      emit(ChatsError(e.toString()));
-    }
+          if (isConnect) {
+            var snapshot = await FirebaseFirestore.instance
+                .collection(FirebaseHelper.chatCollection)
+                .where(FirebaseHelper.chatCountUnRead, isNotEqualTo: 0)
+                .get();
+            isAll = false;
+            selected = 1;
+            chats = snapshot.docs
+                .map((doc) => ChatModel.fromDocument(doc))
+                .toList();
+          }
+          emit(UnReadChatsSuccessState());
+        } catch (e) {
+          emit(ChatsError(e.toString()));
+        }
+      } else if (event is LogoutAdminEvent) {
+        emit(LogoutAdminLoadingState());
+        await logoutUseCase().then((v) {
+          emit(LogoutAdminSuccessState());
+        }).catchError((e) {
+          emit(LogoutAdminErrorState());
+        });
+      }
+    });
   }
 }

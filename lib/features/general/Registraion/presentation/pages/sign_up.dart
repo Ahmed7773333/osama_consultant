@@ -7,15 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
+import '../../../../../core/network/check_internet.dart';
 import '../../../../../core/utils/app_colors.dart';
-import '../../../../../core/utils/app_strings.dart';
 import '../../../../../core/utils/app_styles.dart';
-import '../../../../../core/utils/assets.dart';
 import '../../../../../core/utils/componetns.dart';
 import '../../../../../core/utils/get_itt.dart' as di;
 import '../bloc/registraion_bloc.dart';
-import '../widgets/filled_button.dart';
-import 'sign_in.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // ignore: must_be_immutable, use_key_in_widget_constructors
 class SignUpPage extends StatefulWidget {
@@ -33,23 +31,26 @@ class _SignUpPageState extends State<SignUpPage> {
   var keyy = GlobalKey<FormState>();
   var _selectedCountry = CountryPickerUtils.getCountryByPhoneCode('1');
   bool checked = false;
+  RegistraionBloc? bloc;
   @override
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF0EBE7E),
+            AppColors.secondry,
             Color(0xFFF5F5F5),
             Color(0xFFF5F5F5),
             Color(0xFFF5F5F5),
             Color(0xFFF5F5F5),
             Color(0xFFF5F5F5),
             Color(0xFFF5F5F5),
-            Color(0xFF0EBE7E),
+            AppColors.secondry,
           ],
         ),
       ),
@@ -58,16 +59,18 @@ class _SignUpPageState extends State<SignUpPage> {
         create: (context) => di.sl<RegistraionBloc>(),
         child: BlocConsumer<RegistraionBloc, RegistraionState>(
           listener: (context, state) async {
-            if (state is AuthError) {
+            if (state is SignUpError) {
               Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Error"),
-                  content: Text(state.l.message),
-                ),
-              );
-              debugPrint(state.l.message);
+              Components.showMessage(context,
+                  content: 'Check Your inputs again',
+                  icon: Icons.error,
+                  color: Colors.red);
+            } else if (state is SigninError) {
+              Navigator.pop(context);
+              Components.showMessage(context,
+                  content: 'Wrong username or password',
+                  icon: Icons.error,
+                  color: Colors.red);
             } else if (state is AuthSuccess) {
               await UserPreferences.saveUserData(state.user.data!);
               final isAdmin = await UserPreferences.getIsAdmin();
@@ -81,19 +84,24 @@ class _SignUpPageState extends State<SignUpPage> {
                     Routes.homeLayoutAdmin,
                     arguments: {'page': 0});
               }
-            } else if (state is AuthLoading) {
+            } else if (state is AuthLoading || state is ResetPassLoading) {
               showDialog(
                 context: context,
-                builder: (context) => const AlertDialog(
-                  title: Center(child: CircularProgressIndicator()),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                ),
+                builder: (context) => Components.circularProgressHeart(),
               );
+            } else if (state is ResetPassError) {
+              Navigator.pop(context);
+              Components.showMessage(context,
+                  content: 'Wrong OTP', icon: Icons.error, color: Colors.red);
+            } else if (state is ResetPassSuccess) {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
             }
           },
           builder: (context, state) {
-            RegistraionBloc bloc = RegistraionBloc.get(context);
+            bloc ??= RegistraionBloc.get(context);
             return Material(
               color: Colors.transparent,
               child: Form(
@@ -102,37 +110,31 @@ class _SignUpPageState extends State<SignUpPage> {
                   child: Column(
                     children: [
                       SizedBox(height: 30.h),
-                      Text(AppStrings.signUPTxt1,
-                          style: Theme.of(context).textTheme.displayLarge),
-                      SizedBox(height: 20.h),
-                      Text(AppStrings.signUPTxt2,
-                          style: Theme.of(context).textTheme.displayMedium),
-                      SizedBox(height: 20.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          cusFilledButton(
-                              icon: Assets.iconGoogle,
-                              name: AppStrings.google,
-                              onClick: () {
-                                bloc.add(SignInGoogleEvent());
-                              }),
-                          cusFilledButton(
-                              icon: Assets.iconFacebook,
-                              name: AppStrings.facebook,
-                              onClick: () {
-                                debugPrint('working');
-                              }),
-                        ],
-                      ),
+
+                      // SizedBox(height: 20.h),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: [
+                      //     cusFilledButton(
+                      //         icon: Assets.iconGoogle,
+                      //         name: AppStrings.google,
+                      //         onClick: () {
+                      //           bloc.add(SignUpGoogleEvent());
+                      //         }),
+                      //     cusFilledButton(
+                      //         icon: Assets.iconFacebook,
+                      //         name: AppStrings.facebook,
+                      //         onClick: () {}),
+                      //   ],
+                      // ),
                       SizedBox(height: 20.h),
                       Components.customTextField(
-                        hint: AppStrings.fullNameHint,
+                        hint: localizations.fullNameHint,
                         controller: nameController,
                       ),
                       SizedBox(height: 20.h),
                       Components.customTextField(
-                        hint: AppStrings.emailHint,
+                        hint: localizations.emailHint,
                         controller: emailController,
                       ),
                       SizedBox(height: 20.h),
@@ -151,7 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                           ),
                           Components.customTextField(
-                            hint: AppStrings.phoneHint,
+                            hint: localizations.phoneHint,
                             controller: phoneController,
                             isPhone: true,
                           ),
@@ -159,14 +161,14 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(height: 20.h),
                       Components.customTextField(
-                        hint: AppStrings.passwordHint,
+                        hint: localizations.passwordHint,
                         controller: passwordController,
                         isPassword: true,
                         isShow: false,
                       ),
                       SizedBox(height: 20.h),
                       Components.customTextField(
-                        hint: AppStrings.confirmedpasswordHint,
+                        hint: localizations.confirmedpasswordHint,
                         controller: confirmedpasswordController,
                         isPassword: true,
                         isShow: false,
@@ -183,22 +185,27 @@ class _SignUpPageState extends State<SignUpPage> {
                             },
                             activeColor: AppColors.secondry,
                           ),
-                          Text(AppStrings.iAgree,
+                          Text(localizations.iAgree,
                               style: Theme.of(context).textTheme.displaySmall),
                         ],
                       ),
                       SizedBox(height: 20.h),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if ((keyy.currentState?.validate() ?? false) &&
                               checked) {
-                            bloc.add(SignUpEvent(
-                              emailController.text,
-                              passwordController.text,
-                              nameController.text,
-                              '+${_selectedCountry.phoneCode}${phoneController.text}',
-                              confirmedpasswordController.text,
-                            ));
+                            bool isConnect = await ConnectivityService()
+                                .getConnectionStatus();
+
+                            if (isConnect) {
+                              bloc!.add(SignUpEvent(
+                                emailController.text,
+                                passwordController.text,
+                                nameController.text,
+                                '+${_selectedCountry.phoneCode}${phoneController.text}',
+                                confirmedpasswordController.text,
+                              ));
+                            }
 
                             debugPrint('working');
                           } else {
@@ -208,7 +215,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(295.w, 54.h)),
                         child: Text(
-                          AppStrings.signUp,
+                          localizations.signUp,
                           style: AppStyles.buttonTextStyle,
                         ),
                       ),
@@ -216,14 +223,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       Center(
                         child: TextButton(
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (c) => SignInPage(bloc)));
+                            Navigator.pushNamed(context, Routes.signIn,
+                                arguments: {'bloc': bloc!});
                           },
                           child: Text(
-                            AppStrings.alreadyHave,
-                            style: AppStyles.greenLableStyle,
+                            localizations.alreadyHave,
+                            style: AppStyles.redLableStyle,
                           ),
                         ),
                       ),

@@ -25,3 +25,5 @@ class GetSlotByIdEvent extends MeetingsControlEvent {
   int id;
   GetSlotByIdEvent(this.id);
 }
+
+class DeleteSlotEvent extends MeetingsControlEvent {}

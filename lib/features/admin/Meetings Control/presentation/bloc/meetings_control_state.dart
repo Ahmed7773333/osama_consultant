@@ -40,3 +40,9 @@ class AddSuccessState extends MeetingsControlState {}
 class GetSlotByIdLoading extends MeetingsControlState {}
 
 class GetSlotByIdSuccessState extends MeetingsControlState {}
+
+class DeleteSlotByIdLoading extends MeetingsControlState {}
+
+class DeleteSlotByIdSuccessState extends MeetingsControlState {}
+
+class DeleteSlotByIdErrorState extends MeetingsControlState {}

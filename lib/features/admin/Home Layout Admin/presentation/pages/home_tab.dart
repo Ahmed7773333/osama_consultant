@@ -1,16 +1,18 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/config/app_routes.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
 
+import '../../../../../core/network/check_internet.dart';
+import '../../../../../core/utils/app_colors.dart';
+
 class HomeTab extends StatelessWidget {
   const HomeTab(this.bloc, {super.key});
   final HomeLayoutAdminBloc bloc;
+
   @override
   Widget build(BuildContext context) {
-    List<Map<String, dynamic>> items = [
+    final List<Map<String, dynamic>> items = [
       {
         'title': 'Manage Your Times',
         'icon': Icons.calendar_month,
@@ -18,20 +20,12 @@ class HomeTab extends StatelessWidget {
           Navigator.pushNamed(context, Routes.manageTimes);
         }
       },
-      {'title': 'Medical File', 'icon': Icons.file_copy, 'onTab': () {}},
       {
-        'title': 'Ask your doctor',
-        'icon': Icons.local_hospital,
+        'title': 'Logout',
+        'icon': Icons.login_rounded,
         'onTab': () async {
-          bloc.add(LogoutAdminEvent());
-        }
-      },
-      {'title': 'Customer Service', 'icon': Icons.call, 'onTab': () {}},
-      {
-        'title': 'Account Settings',
-        'icon': Icons.settings,
-        'onTab': () {
-          Navigator.pushNamed(context, Routes.settings);
+          bool isConnect = await ConnectivityService().getConnectionStatus();
+          if (isConnect) bloc.add(LogoutAdminEvent());
         }
       },
       {
@@ -44,17 +38,24 @@ class HomeTab extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.95,
-              mainAxisSpacing: 24.h,
-              crossAxisSpacing: 11.w),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return homeItem(items[index]['title'], items[index]['icon'],
-                items[index]['onTab']);
-          }),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            homeItem(items[0]['title'], items[0]['icon'], items[0]['onTab']),
+            SizedBox(height: 24.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                homeItem(
+                    items[1]['title'], items[1]['icon'], items[1]['onTab']),
+                homeItem(
+                    items[2]['title'], items[2]['icon'], items[2]['onTab']),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -63,17 +64,21 @@ class HomeTab extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 2,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: Colors.green,
-              size: 85.r,
-            ),
-            SizedBox(height: 8.h),
-            Text(title, style: TextStyle(fontSize: 16.sp)),
-          ],
+        child: Padding(
+          padding: EdgeInsets.all(16.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: AppColors.secondry,
+                size: 85.r,
+              ),
+              SizedBox(height: 8.h),
+              Text(title, style: TextStyle(fontSize: 16.sp)),
+            ],
+          ),
         ),
       ),
     );

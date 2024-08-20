@@ -4,15 +4,16 @@ import 'package:osama_consul/core/utils/app_styles.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/bloc/meetings_control_bloc.dart';
 
-Widget daysListView(
-    List<ScheduleModel> daysList, MeetingsControlBloc bloc, int selected) {
+import '../../../../../core/utils/app_colors.dart';
+
+Widget daysListView(List<ScheduleModel> daysList, MeetingsControlBloc bloc) {
   return SizedBox(
     height: 60.h,
     child: ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: daysList.length,
       itemBuilder: (context, index) {
-        bool isSelected = selected == index;
+        bool isSelected = MeetingsControlBloc.get(context).selectedDay == index;
 
         return GestureDetector(
           onTap: () {
@@ -33,8 +34,8 @@ Widget daysListView(
                   ),
               ],
             ),
-            padding: EdgeInsets.all(8.0.r),
-            backgroundColor: Colors.green,
+            padding: EdgeInsets.all(8.r),
+            backgroundColor: AppColors.secondry,
             labelStyle: const TextStyle(color: Colors.black),
           ),
         );

@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:record/record.dart';
 
 import '../../../../../core/network/firebase_helper.dart';
-import '../../../../user/HomeLayout/data/models/message.dart';
+import '../../data/models/message.dart';
 
 part 'chat_screen_event.dart';
 part 'chat_screen_state.dart';
@@ -17,7 +18,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
   bool isRecording = false;
   bool isPaused = false;
   bool isPlaying = false;
-  final FlutterSoundRecorder recorder = FlutterSoundRecorder();
+  final AudioRecorder recorder = AudioRecorder();
 
   static ChatScreenBloc get(context) => BlocProvider.of(context);
 
@@ -50,49 +51,67 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     try {
       final status = await Permission.microphone.request();
       if (status != PermissionStatus.granted) {
-        throw RecordingPermissionException('Microphone permission not granted');
+        throw Exception('Microphone permission not granted');
       }
-      await recorder
-          .openRecorder()
-          .whenComplete(() => emit(RecorderInitializedState()));
+      emit(RecorderInitializedState());
     } catch (e) {
       emit(RecorderErrorState(e.toString()));
     }
   }
 
   Future<void> _startRecorder(Emitter<ChatScreenState> emit) async {
-    final dir = await getApplicationDocumentsDirectory();
-    isRecording = true;
-    filePath =
-        '${dir.path}/audio_message_${DateTime.now().millisecondsSinceEpoch}.aac';
-    await recorder
-        .startRecorder(toFile: filePath)
-        .whenComplete(() => emit(StartRecorderState()));
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      isRecording = true;
+      filePath =
+          '${dir.path}/audio_message_${DateTime.now().millisecondsSinceEpoch}.aac';
+
+      if (await recorder.hasPermission()) {
+        await recorder.start(const RecordConfig(), path: filePath);
+        emit(StartRecorderState());
+      }
+    } catch (e) {
+      emit(RecorderErrorState(e.toString()));
+    }
   }
 
   Future<void> _pauseRecorder(Emitter<ChatScreenState> emit) async {
-    isPaused = true;
-    await recorder
-        .pauseRecorder()
-        .whenComplete(() => emit(PauseRecorderState()));
+    try {
+      isPaused = true;
+      await recorder.pause();
+      emit(PauseRecorderState());
+    } catch (e) {
+      emit(RecorderErrorState(e.toString()));
+    }
   }
 
   Future<void> _resumeRecorder(Emitter<ChatScreenState> emit) async {
-    isPaused = false;
-    await recorder
-        .resumeRecorder()
-        .whenComplete(() => emit(ResumeRecorderState()));
+    try {
+      isPaused = false;
+      await recorder.resume();
+      emit(ResumeRecorderState());
+    } catch (e) {
+      emit(RecorderErrorState(e.toString()));
+    }
   }
 
   Future<void> _stopRecorder(Emitter<ChatScreenState> emit) async {
-    isRecording = false;
-    await recorder.stopRecorder().whenComplete(() => emit(StopRecorderState()));
+    try {
+      isRecording = false;
+      await recorder.stop();
+      emit(StopRecorderState());
+    } catch (e) {
+      emit(RecorderErrorState(e.toString()));
+    }
   }
 
   Future<void> _closeEvent(Emitter<ChatScreenState> emit) async {
-    await recorder
-        .closeRecorder()
-        .whenComplete(() => emit(CloseRecorderState()));
+    try {
+      await recorder.dispose();
+      emit(CloseRecorderState());
+    } catch (e) {
+      emit(RecorderErrorState(e.toString()));
+    }
   }
 
   Future<void> _getChatMessagesEvent(
@@ -120,7 +139,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
 
   @override
   Future<void> close() async {
-    await recorder.closeRecorder();
+    await recorder.dispose();
     return super.close();
   }
 }

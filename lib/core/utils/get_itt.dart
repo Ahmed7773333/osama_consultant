@@ -1,15 +1,23 @@
 import 'package:get_it/get_it.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
+import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/delete_slot.dart';
 import 'package:osama_consul/features/admin/Requests%20Page/data/datasources/requests_admin_ds_remote_impl.dart';
 import 'package:osama_consul/features/admin/Requests%20Page/data/repositories/requests_admin_repo_impl.dart';
+import 'package:osama_consul/features/admin/Requests%20Page/domain/usecases/generate_rtc_token.dart';
+import 'package:osama_consul/features/admin/Requests%20Page/domain/usecases/reject_request_usecase.dart';
 import 'package:osama_consul/features/admin/Requests%20Page/presentation/bloc/requests_page_bloc.dart';
-import 'package:osama_consul/features/general/Registraion/domain/usecases/sign_in_google_usercase.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/datasources/remote_slots_ds_impl.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/repositories/slots_repo_impl.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/add_slot.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_all_schedule.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_schedule_by_id.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/bloc/meetings_control_bloc.dart';
+import 'package:osama_consul/features/general/Registraion/domain/usecases/forget_password.dart';
+import 'package:osama_consul/features/general/Registraion/domain/usecases/reset_password.dart';
+import 'package:osama_consul/features/user/Edit%20Profile/data/datasources/remote_edit_ds_impl.dart';
+import 'package:osama_consul/features/user/Edit%20Profile/data/repositories/edit_repo_impl.dart';
+import 'package:osama_consul/features/user/Edit%20Profile/domain/usecases/edit_usecase.dart';
+import 'package:osama_consul/features/user/Edit%20Profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:osama_consul/features/user/HomeLayout/data/datasources/home_ds_remote_impl.dart';
 import 'package:osama_consul/features/user/HomeLayout/domain/usecases/logout.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
@@ -18,6 +26,7 @@ import 'package:osama_consul/features/user/MyRequests/data/repositories/my_reque
 import 'package:osama_consul/features/user/MyRequests/domain/usecases/get_all_requests.dart';
 import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
 
+import '../../features/admin/Requests Page/domain/usecases/accet_request_usecase.dart';
 import '../../features/admin/Requests Page/domain/usecases/get_all_requests.dart';
 import '../../features/general/Registraion/data/datasources/auth_remote_ds_impl.dart';
 import '../../features/general/Registraion/data/repositories/auth_repo_impl.dart';
@@ -45,10 +54,16 @@ void init() {
   // Auth Use Cases
   sl.registerLazySingleton(() => SignInUseCase(sl<AuthRepoImpl>()));
   sl.registerLazySingleton(() => SignUpUseCase(sl<AuthRepoImpl>()));
-  sl.registerLazySingleton(() => SignInGoogleUseCase(sl<AuthRepoImpl>()));
+  // sl.registerLazySingleton(() => SignInGoogleUseCase(sl<AuthRepoImpl>()));
+  // sl.registerLazySingleton(() => SignUpGoogleUsercase(sl<AuthRepoImpl>()));
+  sl.registerLazySingleton(() => ForgetPasswordUseCase(sl<AuthRepoImpl>()));
+  sl.registerLazySingleton(() => ResetPasswordUsecase(sl<AuthRepoImpl>()));
   // Auth Bloc
   sl.registerFactory(() => RegistraionBloc(
-      sl<SignInUseCase>(), sl<SignUpUseCase>(), sl<SignInGoogleUseCase>()));
+      sl<SignInUseCase>(),
+      sl<SignUpUseCase>(),
+      sl<ForgetPasswordUseCase>(),
+      sl<ResetPasswordUsecase>()));
   // meetings controll Data source
   sl.registerLazySingleton<RemoteSlotsDsImpl>(
       () => RemoteSlotsDsImpl(sl<ApiManager>()));
@@ -59,10 +74,11 @@ void init() {
   sl.registerLazySingleton(() => AddSlotUseCase(sl<SlotsRepoImpl>()));
   sl.registerLazySingleton(() => GetAllSchedules(sl<SlotsRepoImpl>()));
   sl.registerLazySingleton(() => GetScheduleById(sl<SlotsRepoImpl>()));
+  sl.registerLazySingleton(() => DeleteSlot(sl<SlotsRepoImpl>()));
 
   // meetings controll Bloc
-  sl.registerFactory(() => MeetingsControlBloc(
-      sl<AddSlotUseCase>(), sl<GetAllSchedules>(), sl<GetScheduleById>()));
+  sl.registerFactory(() => MeetingsControlBloc(sl<AddSlotUseCase>(),
+      sl<GetAllSchedules>(), sl<GetScheduleById>(), sl<DeleteSlot>()));
   //HomeLayout data source
   sl.registerLazySingleton<HomeDsRemoteImpl>(
       () => HomeDsRemoteImpl(sl<ApiManager>()));
@@ -99,8 +115,28 @@ void init() {
   //Requests admin usecases
   sl.registerLazySingleton<GetAllRequestsAdminUseCase>(
       () => GetAllRequestsAdminUseCase(sl<RequestsAdminRepoImpl>()));
+  sl.registerLazySingleton<AccetRequestUsecase>(
+      () => AccetRequestUsecase(sl<RequestsAdminRepoImpl>()));
+  sl.registerLazySingleton<RejectRequestUsecase>(
+      () => RejectRequestUsecase(sl<RequestsAdminRepoImpl>()));
+  sl.registerLazySingleton<GenerateRtcToken>(
+      () => GenerateRtcToken(sl<RequestsAdminRepoImpl>()));
   //Requests bloc
-  sl.registerFactory(() => RequestsPageBloc(sl<GetAllRequestsAdminUseCase>()));
+  sl.registerFactory(() => RequestsPageBloc(
+      sl<GetAllRequestsAdminUseCase>(),
+      sl<RejectRequestUsecase>(),
+      sl<AccetRequestUsecase>(),
+      sl<GenerateRtcToken>()));
   //homelayoutadmin bloc
   sl.registerFactory(() => HomeLayoutAdminBloc(sl<LogoutUseCase>()));
+  //edit datasource
+  sl.registerLazySingleton<RemoteEditDsImpl>(
+      () => RemoteEditDsImpl(sl<ApiManager>()));
+  //edit repo
+  sl.registerLazySingleton<EditRepoImpl>(
+      () => EditRepoImpl(sl<RemoteEditDsImpl>()));
+  //edit usecases
+  sl.registerLazySingleton<EditUsecase>(() => EditUsecase(sl<EditRepoImpl>()));
+  //edit bloc
+  sl.registerFactory(() => EditProfileBloc(sl<EditUsecase>()));
 }

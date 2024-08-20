@@ -20,15 +20,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SettingsBloc(),
+      create: (_) => SettingsBloc()..add(InitSettingsEvent()),
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
-          Locale appLocale;
-          if (state is LanguageChanged) {
-            appLocale = Locale(state.language);
-          } else {
-            appLocale = const Locale('en');
-          }
           return ScreenUtilInit(
             designSize: const Size(375, 812),
             minTextAdapt: true,
@@ -39,7 +33,9 @@ class MyApp extends StatelessWidget {
               supportedLocales: AppLocalizations.supportedLocales,
               debugShowCheckedModeBanner: false,
               theme: AppTheme.themeData,
-              locale: appLocale,
+              locale: context.read<SettingsBloc>().isEnglish
+                  ? const Locale('en')
+                  : const Locale('ar'),
               onGenerateRoute: (settings) => RouteGenerator.getRoute(settings),
             ),
           );

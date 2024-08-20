@@ -7,20 +7,8 @@ abstract class SettingsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class SwitchLanguage extends SettingsEvent {
-  final String language;
+class SwitchLanguage extends SettingsEvent {}
 
-  const SwitchLanguage(this.language);
+class ToggleNotification extends SettingsEvent {}
 
-  @override
-  List<Object> get props => [language];
-}
-
-class ToggleNotification extends SettingsEvent {
-  final bool isEnabled;
-
-  const ToggleNotification(this.isEnabled);
-
-  @override
-  List<Object> get props => [isEnabled];
-}
+class InitSettingsEvent extends SettingsEvent {}

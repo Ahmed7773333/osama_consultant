@@ -1,8 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:osama_consul/core/cache/notification_service.dart';
-import 'package:osama_consul/features/general/Registraion/domain/usecases/sign_in_google_usercase.dart';
-
+import 'package:osama_consul/features/general/Registraion/domain/usecases/forget_password.dart';
+import 'package:osama_consul/features/general/Registraion/domain/usecases/reset_password.dart';
 import '../../../../../core/eror/failuers.dart';
 import '../../data/models/user_model.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
@@ -14,40 +13,74 @@ class RegistraionBloc extends Bloc<RegistraionEvent, RegistraionState> {
   static RegistraionBloc get(context) => BlocProvider.of(context);
   SignInUseCase signInUseCase;
   SignUpUseCase signUpUseCase;
-  SignInGoogleUseCase signInGoogleUseCase;
+  // SignInGoogleUseCase signInGoogleUseCase;
+  // SignUpGoogleUsercase signupGoogleUseCase;
+  ForgetPasswordUseCase forgetPasswordUseCase;
+  ResetPasswordUsecase resetPasswordUsecase;
+
   String token = '';
-  RegistraionBloc(
-      this.signInUseCase, this.signUpUseCase, this.signInGoogleUseCase)
+  String emailForget = '';
+
+  RegistraionBloc(this.signInUseCase, this.signUpUseCase,
+      this.forgetPasswordUseCase, this.resetPasswordUsecase)
       : super(RegistraionInitial()) {
     on<RegistraionEvent>((event, emit) async {
       if (event is SignInEvent) {
         emit(AuthLoading());
-        var result = await signInUseCase(event.email, event.password,
-            (await NotificationService().getToken())!);
+        var result = await signInUseCase(
+          event.email,
+          event.password,
+        );
         result.fold((l) {
-          emit(AuthError(l));
+          emit(SigninError(l));
         }, (r) {
           emit(AuthSuccess(r));
         });
       } else if (event is SignUpEvent) {
         emit(AuthLoading());
-        token = (await NotificationService().getToken())!;
         var result = await signUpUseCase(event.email, event.password,
-            event.name, event.repassword, event.phone, token);
+            event.name, event.repassword, event.phone);
         result.fold((l) {
-          emit(AuthError(l));
+          emit(SignUpError(l));
         }, (r) {
           emit(AuthSuccess(r));
         });
-      } else if (event is SignInGoogleEvent) {
-        emit(AuthLoading());
-        var result = await signInGoogleUseCase();
-        result.fold((l) {
-          emit(AuthError(l));
-        }, (r) {
-          emit(AuthSuccess(r));
-        });
+      } else if (event is ForgetPasswordEvent) {
+        emit(ForgetPassLoading());
+        try {
+          await forgetPasswordUseCase(event.email);
+          emailForget = event.email;
+          emit(ForgetPassSuccess());
+        } catch (e) {
+          emit(ForgetPassError());
+        }
+      } else if (event is ResetPasswordEvent) {
+        emit(ResetPassLoading());
+        try {
+          await resetPasswordUsecase(event.email, event.password, event.otp);
+
+          emit(ResetPassSuccess());
+        } catch (e) {
+          emit(ResetPassError());
+        }
       }
+      //  else if (event is SignInGoogleEvent) {
+      //   emit(AuthLoading());
+      //   var result = await signInGoogleUseCase();
+      //   result.fold((l) {
+      //     emit(AuthError(l));
+      //   }, (r) {
+      //     emit(AuthSuccess(r));
+      //   });
+      // } else if (event is SignUpGoogleEvent) {
+      //   emit(AuthLoading());
+      //   var result = await signupGoogleUseCase();
+      //   result.fold((l) {
+      //     emit(AuthError(l));
+      //   }, (r) {
+      //     emit(AuthSuccess(r));
+      //   });
+      // }
     });
   }
 }

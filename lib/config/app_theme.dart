@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/utils/app_colors.dart';
+import '../core/utils/app_styles.dart';
 
 class AppTheme {
   static final ThemeData themeData = ThemeData(
@@ -10,7 +11,11 @@ class AppTheme {
     scaffoldBackgroundColor:
         AppColors.background, // Light background color for scaffold
     fontFamily: 'Roboto', // Adjust if another font is used in the design
-
+    appBarTheme: AppBarTheme(
+      backgroundColor: AppColors.secondry,
+      iconTheme: const IconThemeData(color: Colors.white),
+      titleTextStyle: AppStyles.welcomeSytle,
+    ),
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontSize: 24.0.sp,
@@ -45,16 +50,13 @@ class AppTheme {
 
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: const Color(0xFF00C853),
-        padding: const EdgeInsets.symmetric(vertical: 15.0),
+        backgroundColor: AppColors.secondry,
+        padding: EdgeInsets.symmetric(vertical: 15.h),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(5.r),
         ),
-        textStyle: const TextStyle(
-          fontSize: 18.0,
-          fontWeight: FontWeight.bold,
-        ),
+        textStyle: TextStyle(
+            fontSize: 18.sp, fontWeight: FontWeight.bold, color: Colors.white),
       ),
     ),
 
@@ -65,6 +67,14 @@ class AppTheme {
           fontSize: 16.0,
         ),
       ),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: AppColors.secondry,
+      selectedLabelStyle: TextStyle(color: Colors.white),
+      unselectedLabelStyle: TextStyle(color: Colors.white),
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white,
     ),
     colorScheme: ColorScheme.fromSwatch()
         .copyWith(secondary: AppColors.accent)

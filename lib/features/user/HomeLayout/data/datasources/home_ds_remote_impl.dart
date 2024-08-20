@@ -7,6 +7,7 @@ import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:osama_consul/features/user/HomeLayout/data/datasources/home_ds_remote.dart';
 import 'package:osama_consul/features/user/HomeLayout/data/models/meeting_booking.dart';
 
+import '../../../../../core/cache/notification_service.dart';
 import '../../../../../core/eror/failuers.dart';
 
 class HomeDsRemoteImpl extends HomeDsRemote {
@@ -17,12 +18,14 @@ class HomeDsRemoteImpl extends HomeDsRemote {
       MeetingBody meet) async {
     try {
       Response response = await apiManager.postDataa(
-        EndPoints.confirmBooking,
+        EndPoints.meeting,
         body: meet.toJson(),
         data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
       );
       MeetingResponseModel meeting =
           MeetingResponseModel.fromJson(response.data);
+      NotificationService().pushNotification('New Request',
+          ' From ${await UserPreferences.getName()}', 'admin@chat.com');
       return right(meeting.data!);
     } catch (e) {
       debugPrint(e.toString());

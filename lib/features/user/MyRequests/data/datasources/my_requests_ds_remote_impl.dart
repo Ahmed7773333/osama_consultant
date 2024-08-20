@@ -16,7 +16,7 @@ class MyRequestsDsRemoteImpl extends MyRequestsDsRemote {
   Future<Either<Failures, List<RequestModel>>> getAllRequests() async {
     try {
       Response response = await apiManager.getDataa(
-        '${EndPoints.confirmBooking}?user_id=${(await UserPreferences.getId()) ?? ''}&per_page=10',
+        '${EndPoints.meeting}?user_id=${(await UserPreferences.getId()) ?? ''}&per_page=10',
         data: {
           'Authorization': 'Bearer ${(await UserPreferences.getToken()) ?? ''}'
         },

@@ -2,22 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:osama_consul/core/network/check_internet.dart';
+import 'package:osama_consul/core/utils/app_colors.dart';
+import 'package:osama_consul/features/general/Registraion/presentation/widgets/enter_email.dart';
 
 import '../../../../../config/app_routes.dart';
-import '../../../../../core/utils/app_strings.dart';
 import '../../../../../core/utils/app_styles.dart';
-import '../../../../../core/utils/assets.dart';
 import '../../../../../core/utils/componetns.dart';
 import '../bloc/registraion_bloc.dart';
-import '../widgets/filled_button.dart';
-import '../widgets/forget_password_bottom_sheet.dart';
-
-class SignInArguments {
-  final RegistraionBloc
-      bloc; // Replace `YourBlocType` with the actual type of `bloc`
-
-  SignInArguments(this.bloc);
-}
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage(this.bloc, {super.key});
@@ -31,30 +24,26 @@ class _SignInPageState extends State<SignInPage> {
   TextEditingController passwordController = TextEditingController();
   var keyy = GlobalKey<FormState>();
 
-  // Replace `YourBlocType` with the actual type of `bloc`
-
   @override
   void initState() {
     super.initState();
   }
 
-  // Future<void> _handleGoogleSignOut() async {
-  //   await _googleSignIn.signOut();
-  // }
-
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF0EBE7E), // Light blue color at the top
+            AppColors.secondry, // Light blue color at the top
             Color(0xFFF5F5F5), // Light background color in the middle
             Color(0xFFF5F5F5), // Light background color in the middle
             Color(0xFFF5F5F5), // Light background color in the middle
-            Color(0xFF0EBE7E), // Light background color at the bottom
+            AppColors.secondry, // Light background color at the bottom
           ],
         ),
       ),
@@ -68,40 +57,36 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 SizedBox(height: 90.h),
                 Text(
-                  AppStrings.signInTxt1,
+                  localizations.signInTxt1,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
-                SizedBox(height: 20.h),
-                Text(
-                  AppStrings.signInTxt2,
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    cusFilledButton(
-                      icon: Assets.iconGoogle,
-                      name: AppStrings.google,
-                      onClick: () {
-                        widget.bloc.add(SignInGoogleEvent());
-                      },
-                    ),
-                    cusFilledButton(
-                      icon: Assets.iconFacebook,
-                      name: AppStrings.facebook,
-                      onClick: () {},
-                    ),
-                  ],
-                ),
+
+                // SizedBox(height: 20.h),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     cusFilledButton(
+                //       icon: Assets.iconGoogle,
+                //       name: AppStrings.google,
+                //       onClick: () {
+                //         widget.bloc.add(SignInGoogleEvent());
+                //       },
+                //     ),
+                //     cusFilledButton(
+                //       icon: Assets.iconFacebook,
+                //       name: AppStrings.facebook,
+                //       onClick: () {},
+                //     ),
+                //   ],
+                // ),
                 SizedBox(height: 20.h),
                 Components.customTextField(
-                  hint: AppStrings.emailHint,
+                  hint: localizations.emailHint,
                   controller: emailController,
                 ),
                 SizedBox(height: 20.h),
                 Components.customTextField(
-                  hint: AppStrings.passwordHint,
+                  hint: localizations.passwordHint,
                   controller: passwordController,
                   isPassword: true,
                   isShow: false,
@@ -109,11 +94,14 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 SizedBox(height: 20.h),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if ((keyy.currentState?.validate() ?? false)) {
                       // Event sign in
-                      widget.bloc.add(SignInEvent(
-                          emailController.text, passwordController.text));
+                      bool isConnect =
+                          await ConnectivityService().getConnectionStatus();
+                      if (isConnect)
+                        widget.bloc.add(SignInEvent(
+                            emailController.text, passwordController.text));
                       debugPrint('working');
                     } else {
                       debugPrint('error');
@@ -121,7 +109,7 @@ class _SignInPageState extends State<SignInPage> {
                   },
                   style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
                   child: Text(
-                    AppStrings.logIn,
+                    localizations.logIn,
                     style: AppStyles.buttonTextStyle,
                   ),
                 ),
@@ -129,16 +117,14 @@ class _SignInPageState extends State<SignInPage> {
                 Center(
                   child: TextButton(
                     onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) {
-                          return const ForgotPasswordBottomSheet();
-                        },
-                      );
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (c) => EmailEntryPage(widget.bloc)));
                     },
                     child: Text(
-                      AppStrings.forget,
-                      style: AppStyles.greenLableStyle,
+                      localizations.forget,
+                      style: AppStyles.redLableStyle,
                     ),
                   ),
                 ),
@@ -149,8 +135,8 @@ class _SignInPageState extends State<SignInPage> {
                       Navigator.of(context).pushReplacementNamed(Routes.signUp);
                     },
                     child: Text(
-                      AppStrings.dontHave,
-                      style: AppStyles.greenLableStyle,
+                      localizations.dontHave,
+                      style: AppStyles.redLableStyle,
                     ),
                   ),
                 ),

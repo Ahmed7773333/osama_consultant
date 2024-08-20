@@ -79,6 +79,7 @@ class RequestModel {
   String? createdAt;
   String? updatedAt;
   ScheduleSlot? scheduleSlot;
+  String? rtcToken;
 
   RequestModel(
       {this.id,
@@ -89,7 +90,8 @@ class RequestModel {
       this.meetingDate,
       this.createdAt,
       this.updatedAt,
-      this.scheduleSlot});
+      this.scheduleSlot,
+      this.rtcToken});
 
   RequestModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -100,6 +102,7 @@ class RequestModel {
     meetingDate = json['meeting_date'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    rtcToken = json['rtc_token'];
     scheduleSlot = json['schedule_slot'] != null
         ? ScheduleSlot.fromJson(json['schedule_slot'])
         : null;

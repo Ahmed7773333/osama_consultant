@@ -1,9 +1,12 @@
 class Assets {
   Assets._();
 
-  static const String iconFacebook = "assets/facebook.png";
-
-  static const String iconGoogle = "assets/google.png";
-
   static const String logo = "assets/logo.png";
+  static const String onboarding1 = 'assets/onboarding1.jpg';
+  static const String slider1 = 'assets/slider1.jpg';
+  static const String slider2 = 'assets/slider2.jpg';
+  static const String slider3 = 'assets/slider3.jpg';
+  static const String empty = 'assets/empty.png';
+
+  static const String youtubeIcon = 'assets/youtubeIcon.jpg';
 }

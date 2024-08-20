@@ -53,7 +53,7 @@ class HomelayoutBloc extends Bloc<HomelayoutEvent, HomelayoutState> {
         }, (r) {
           timesOfDay = r.data?.slots ?? [];
           selectedDay = (r.data?.id ?? 1) - 1;
-          slotDetails = timesOfDay.first;
+          slotDetails = timesOfDay.isNotEmpty ? timesOfDay.first : null;
 
           emit(GetScheduleByIdUserSuccessState());
         });

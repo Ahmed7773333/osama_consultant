@@ -59,4 +59,16 @@ class RemoteSlotsDsImpl extends RemoteSlotsDs {
       return left(RemoteFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<void> deleteSlot(int id) async {
+    try {
+      await apiManager.deleteData(
+        EndPoints.slots + '/' + id.toString(),
+        data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
+      );
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }

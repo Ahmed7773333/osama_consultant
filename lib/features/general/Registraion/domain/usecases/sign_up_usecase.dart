@@ -10,11 +10,11 @@ class SignUpUseCase {
   SignUpUseCase(this.authRepo);
 
   Future<Either<Failures, AuthResponseModel>> call(
-          String email,
-          String password,
-          String name,
-          String repassword,
-          String phone,
-          String fcm) =>
-      authRepo.signUP(email, password, name, phone, repassword, fcm);
+    String email,
+    String password,
+    String name,
+    String repassword,
+    String phone,
+  ) =>
+      authRepo.signUP(email, password, name, phone, repassword);
 }

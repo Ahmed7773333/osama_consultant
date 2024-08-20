@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/presentation/bloc/meetings_control_bloc.dart';
+import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../user/MyRequests/presentation/widgets/functions.dart';
 
@@ -42,7 +43,7 @@ Widget gridViewTimesAdmin(List<SlotModel> daysList, MeetingsControlBloc bloc) {
                   ),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.secondry,
             labelStyle:
                 TextStyle(color: isSelected ? Colors.white : Colors.black),
           ),

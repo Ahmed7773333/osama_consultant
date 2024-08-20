@@ -23,4 +23,9 @@ class SlotsRepoImpl extends SlotsRepo {
   Future<Either<Failures, IdScheduleModel>> getScheduleById(int id) {
     return remoteSlotsDs.getScheduleById(id);
   }
+
+  @override
+  Future<void> deleteSlot(int id) {
+    return remoteSlotsDs.deleteSlot(id);
+  }
 }

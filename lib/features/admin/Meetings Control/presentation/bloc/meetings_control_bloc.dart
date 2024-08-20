@@ -5,6 +5,7 @@ import 'package:osama_consul/core/eror/failuers.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/add_slot.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/data/models/all_schedules_model.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/add_slot.dart';
+import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/delete_slot.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_all_schedule.dart';
 import 'package:osama_consul/features/admin/Meetings%20Control/domain/usecases/get_schedule_by_id.dart';
 
@@ -17,13 +18,15 @@ class MeetingsControlBloc
   AddSlotUseCase addSlotUseCase;
   GetAllSchedules getAllSchedules;
   GetScheduleById getScheduleById;
+  DeleteSlot deleteSlot;
+
   List<ScheduleModel> daysOfWeek = [];
   List<SlotModel> timesOfDay = [];
   int selectedDay = 0;
   int selectedTime = 0;
   SlotModel? slotDetails;
-  MeetingsControlBloc(
-      this.addSlotUseCase, this.getAllSchedules, this.getScheduleById)
+  MeetingsControlBloc(this.addSlotUseCase, this.getAllSchedules,
+      this.getScheduleById, this.deleteSlot)
       : super(MeetingsControlInitial()) {
     on<MeetingsControlEvent>((event, emit) async {
       if (event is GetAllSchedulesEvent) {
@@ -43,7 +46,9 @@ class MeetingsControlBloc
         }, (r) {
           timesOfDay = r.data?.slots ?? [];
           selectedDay = (r.data?.id ?? 1) - 1;
-          slotDetails = timesOfDay.first;
+          debugPrint(selectedDay.toString());
+
+          slotDetails = timesOfDay.isNotEmpty ? timesOfDay.first : null;
 
           emit(GeetingbyIdSuccessState(r.data?.slots ?? []));
         });
@@ -63,6 +68,17 @@ class MeetingsControlBloc
         selectedTime = event.id;
         slotDetails = timesOfDay[event.id];
         emit(GetSlotByIdSuccessState());
+      } else if (event is DeleteSlotEvent) {
+        try {
+          emit(DeleteSlotByIdLoading());
+
+          await deleteSlot(slotDetails!.id!);
+          add(GetScheduleByIdEvent(selectedDay + 1));
+          emit(DeleteSlotByIdSuccessState());
+        } catch (e) {
+          debugPrint(e.toString());
+          emit(DeleteSlotByIdErrorState());
+        }
       }
     });
   }

@@ -9,6 +9,7 @@ import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/p
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/home_tab.dart';
 
 import '../../../../../config/app_routes.dart';
+import '../../../../../core/utils/app_colors.dart';
 
 class HomeLayoutAdmin extends StatefulWidget {
   const HomeLayoutAdmin(this.i, {super.key});
@@ -33,7 +34,7 @@ class _HomeLayoutAdminState extends State<HomeLayoutAdmin> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<HomeLayoutAdminBloc>()..add(GetChatsEvent()),
+      create: (context) => sl<HomeLayoutAdminBloc>()..add(GetAllChatsEvent()),
       child: BlocConsumer<HomeLayoutAdminBloc, HomeLayoutAdminState>(
         listener: (context, state) {
           if (state is LogoutAdminSuccessState) {
@@ -69,7 +70,7 @@ class _HomeLayoutAdminState extends State<HomeLayoutAdmin> {
               showSelectedLabels: false,
               showUnselectedLabels: false,
               type: BottomNavigationBarType.fixed,
-              selectedItemColor: Colors.green,
+              selectedItemColor: AppColors.secondry,
               unselectedItemColor: Colors.grey,
               backgroundColor: Colors.white,
               items: [
@@ -83,10 +84,6 @@ class _HomeLayoutAdminState extends State<HomeLayoutAdmin> {
                 BottomNavigationBarItem(
                   icon: Icon(
                     Icons.chat_outlined,
-                    size: 30.r,
-                  ),
-                  activeIcon: Icon(
-                    Icons.chat,
                     size: 30.r,
                   ),
                   label: "",

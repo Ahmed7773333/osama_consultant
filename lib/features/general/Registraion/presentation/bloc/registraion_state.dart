@@ -14,9 +14,14 @@ class RegistraionInitial extends RegistraionState {}
 
 class AuthLoading extends RegistraionState {}
 
-class AuthError extends RegistraionState {
+class SignUpError extends RegistraionState {
   Failures l;
-  AuthError(this.l);
+  SignUpError(this.l);
+}
+
+class SigninError extends RegistraionState {
+  Failures l;
+  SigninError(this.l);
 }
 
 class AuthSuccess extends RegistraionState {
@@ -25,3 +30,15 @@ class AuthSuccess extends RegistraionState {
     this.user,
   );
 }
+
+class ForgetPassLoading extends RegistraionState {}
+
+class ForgetPassError extends RegistraionState {}
+
+class ForgetPassSuccess extends RegistraionState {}
+
+class ResetPassLoading extends RegistraionState {}
+
+class ResetPassError extends RegistraionState {}
+
+class ResetPassSuccess extends RegistraionState {}

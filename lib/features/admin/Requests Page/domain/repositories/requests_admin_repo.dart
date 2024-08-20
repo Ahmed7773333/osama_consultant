@@ -4,4 +4,7 @@ import 'package:osama_consul/features/user/MyRequests/data/models/all_meeting_re
 
 abstract class RequestsAdminRepo {
   Future<Either<Failures, List<RequestModel>>> getAllRequests();
+  Future<void> acceptOrder(int id);
+  Future<void> generateToken(RequestModel r);
+  Future<void> rejectOrder(int id);
 }

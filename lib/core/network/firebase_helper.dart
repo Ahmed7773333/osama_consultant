@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 
-import '../../features/user/HomeLayout/data/models/message.dart';
+import '../../features/general/Chat Screen/data/models/message.dart';
 
 class FirebaseHelper {
   static String chatCollection = 'chats';
@@ -15,8 +15,10 @@ class FirebaseHelper {
   static String senderId = 'senderId';
   static String text = 'text';
   static String time = 'time';
+  static String isRead = 'isRead';
   static String chatOwner = 'chatOwner';
   static String chatName = 'chatName';
+  static String chatCountUnRead = 'UnRead Counter';
 
   Future<void> makeCustomerChat(userModel) async {
     if ((userModel.data!.isAdmin!) == 0) {
@@ -31,18 +33,9 @@ class FirebaseHelper {
         // Document does not exist, so add it
         await docRef.set({
           chatOwner: userModel.data!.email!,
-          chatName: userModel.data!.name!
+          chatName: userModel.data!.name!,
+          chatCountUnRead: 0,
         });
-        // FirebaseFirestore.instance
-        //     .collection(chatCollection)
-        //     .doc(userModel.data!.email!)
-        //     .collection(messagesCollection)
-        //     .add(MessageModel(
-        //             senderId: userModel.data!.email!,
-        //             timestamp: Timestamp.now(),
-        //             text: null,
-        //             audioUrl: null)
-        //         .toMap());
       }
     }
   }
@@ -63,21 +56,47 @@ class FirebaseHelper {
     }
   }
 
-  Future<void> sendMessage(id, text, {String? audioUrl}) async {
+  Future<void> sendMessage(String id, String? text, {String? audioUrl}) async {
     try {
+      final senderId = (await UserPreferences.getEmail())!;
+      final isAdmin = ((await UserPreferences.getIsAdmin())!) == 1;
+
       final message = MessageModel(
         text: text,
-        senderId: (await UserPreferences.getEmail())!,
+        senderId: senderId,
         timestamp: Timestamp.now(),
         audioUrl: audioUrl,
+        isRead: isAdmin,
       );
-      FirebaseFirestore.instance
-          .collection(chatCollection)
-          .doc(id)
-          .collection(messagesCollection)
-          .add(message.toMap());
+
+      final chatDocRef = FirebaseFirestore.instance
+          .collection(FirebaseHelper.chatCollection)
+          .doc(id);
+      final messageCollectionRef =
+          chatDocRef.collection(FirebaseHelper.messagesCollection);
+      messageCollectionRef.doc().set(message.toMap());
+      if (!isAdmin)
+        await chatDocRef
+            .update({FirebaseHelper.chatCountUnRead: FieldValue.increment(1)});
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  Future<void> markAllMessagesAsReadAndResetUnreadCount(String id) async {
+    final isAdmin = (await UserPreferences.getIsAdmin()) == 1;
+    if (isAdmin) {
+      final chatDocRef = FirebaseFirestore.instance
+          .collection(FirebaseHelper.chatCollection)
+          .doc(id);
+      final messageCollectionRef =
+          chatDocRef.collection(FirebaseHelper.messagesCollection);
+      await chatDocRef.update({FirebaseHelper.chatCountUnRead: 0});
+      final messagesQuery = await messageCollectionRef.get();
+      for (var doc in messagesQuery.docs) {
+        doc.reference.update({FirebaseHelper.isRead: true});
+      }
+    } else
+      return null;
   }
 }

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../admin/Meetings Control/data/models/all_schedules_model.dart';
 import '../../../MyRequests/presentation/widgets/functions.dart';
@@ -45,7 +46,7 @@ Widget gridViewTimesUser(List<SlotModel> daysList, HomelayoutBloc bloc) {
                   ),
               ],
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.secondry,
             labelStyle:
                 TextStyle(color: isSelected ? Colors.white : Colors.black),
           ),

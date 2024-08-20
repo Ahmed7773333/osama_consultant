@@ -16,7 +16,7 @@ class AppStyles {
     fontFamily: 'Poppins',
     color: AppColors.primary,
   );
-  static TextStyle greenLableStyle = const TextStyle(
+  static TextStyle redLableStyle = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
@@ -50,7 +50,7 @@ class AppStyles {
     fontSize: 17,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
-    color: Colors.red,
+    color: AppColors.secondry,
   );
   static TextStyle smallStyle = const TextStyle(
     fontSize: 16,

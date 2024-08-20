@@ -25,6 +25,13 @@ class ApiManager {
     return dio.post(Constants.basURl + endPoint, data: body, options: options);
   }
 
+  Future<Response> putData(String endPoint,
+      {Map<String, dynamic>? body, Map<String, dynamic>? data}) {
+    final options = Options(headers: data);
+
+    return dio.put(Constants.basURl + endPoint, data: body, options: options);
+  }
+
   Future<Response> payData(String endPoint,
       {Map<String, dynamic>? body, Map<String, dynamic>? data}) {
     final options = Options(headers: data);

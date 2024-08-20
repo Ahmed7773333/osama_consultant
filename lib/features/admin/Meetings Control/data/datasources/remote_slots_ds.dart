@@ -9,4 +9,5 @@ abstract class RemoteSlotsDs {
   Future<Either<Failures, AllSchedulesModel>> getAllSchedules();
   Future<Either<Failures, IdScheduleModel>> getScheduleById(int id);
   Future<Either<Failures, AddSlotModel>> addSlot(SlotToAdd slot);
+  Future<void> deleteSlot(int id);
 }

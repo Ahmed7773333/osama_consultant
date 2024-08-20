@@ -11,23 +11,28 @@ class SplachScreen extends StatelessWidget {
   const SplachScreen({super.key});
 
   Future<void> _navigateToHome(BuildContext context) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(milliseconds: 0));
     if (!context.mounted) return;
 
     final token = await UserPreferences.getToken();
     final isAdmin = await UserPreferences.getIsAdmin();
-
-    if (token != null) {
-      if (isAdmin == 0) {
-        Navigator.of(context).pushReplacementNamed(Routes.homeLayout);
-      } else {
-        Navigator.of(context).pushReplacementNamed(
-          Routes.homeLayoutAdmin,
-          arguments: {'page': 0},
-        );
-      }
+    final firstTime = await UserPreferences.getFirstTime();
+    debugPrint(firstTime.toString());
+    if (firstTime ?? true) {
+      Navigator.pushReplacementNamed(context, Routes.onboarding);
     } else {
-      Navigator.of(context).pushReplacementNamed(Routes.signUp);
+      if (token != null) {
+        if (isAdmin == 0) {
+          Navigator.of(context).pushReplacementNamed(Routes.homeLayout);
+        } else {
+          Navigator.of(context).pushReplacementNamed(
+            Routes.homeLayoutAdmin,
+            arguments: {'page': 0},
+          );
+        }
+      } else {
+        Navigator.of(context).pushReplacementNamed(Routes.signUp);
+      }
     }
   }
 

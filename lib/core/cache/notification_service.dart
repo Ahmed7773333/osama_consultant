@@ -25,12 +25,15 @@ class NotificationService {
     return token;
   }
 
-  Future<void> pushNotification(String title, String body, String email) async {
+  Future<void> pushNotification(String title, String body, String? email,
+      {int? id}) async {
     try {
       await ApiManager().postDataa(
         EndPoints.sendNotification,
         data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
-        body: {'title': title, 'body': body, 'email': email},
+        body: id == null
+            ? {'title': title, 'body': body, 'email': email}
+            : {'title': title, 'body': body, 'id': id},
       );
     } catch (e) {
       debugPrint(e.toString());
@@ -137,7 +140,10 @@ class NotificationService {
       android: androidPlatformChannelSpecifics,
     );
     await flutterLocalNotificationsPlugin.show(
-        id, title, body.split('/').first, platformChannelSpecifics,
-        payload: body.split('/').last);
+      id,
+      title,
+      body.split('/').first,
+      platformChannelSpecifics,
+    );
   }
 }

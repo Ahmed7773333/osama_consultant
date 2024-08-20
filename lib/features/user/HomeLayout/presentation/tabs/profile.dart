@@ -1,15 +1,16 @@
-import 'dart:typed_data';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
+import 'package:osama_consul/core/utils/app_styles.dart';
+import 'package:osama_consul/features/general/settings/presentation/bloc/settings_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
-import '../../../../../core/utils/app_colors.dart';
-import '../../../../../core/utils/app_styles.dart';
-import '../widgets/drawer.dart';
-import '../widgets/profile_textfield.dart';
+import '../../../../../core/network/check_internet.dart';
+import '../bloc/homelayout_bloc.dart';
+import '../widgets/profile_widgets.dart';
 
 class ProfileTab extends StatefulWidget {
   const ProfileTab(this.bloc, {super.key});
@@ -19,10 +20,6 @@ class ProfileTab extends StatefulWidget {
 }
 
 class _ProfileTabState extends State<ProfileTab> {
-  late TextEditingController name;
-  late TextEditingController email;
-  late TextEditingController phone;
-  Uint8List? _imageBytes;
   String namee = '';
   String emaill = '';
   String phonee = '';
@@ -30,9 +27,6 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   void initState() {
     super.initState();
-    name = TextEditingController(text: '');
-    email = TextEditingController(text: '');
-    phone = TextEditingController(text: '');
     _loadPreferences();
   }
 
@@ -40,131 +34,123 @@ class _ProfileTabState extends State<ProfileTab> {
     namee = (await UserPreferences.getName()) ?? '';
     emaill = (await UserPreferences.getEmail()) ?? '';
     phonee = (await UserPreferences.getPhone()) ?? '';
-    setState(() {
-      name = TextEditingController(text: namee);
-      email = TextEditingController(text: emaill);
-      phone = TextEditingController(text: phonee);
-    });
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(source: source);
-    if (pickedFile != null) {
-      final bytes = await pickedFile.readAsBytes();
-      setState(() {
-        _imageBytes = bytes;
-      });
-    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(200.h),
-        child: Stack(
+    final localizations = AppLocalizations.of(context)!;
+    _loadPreferences();
+    return BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
+      return Padding(
+        padding: EdgeInsets.all(10.r),
+        child: ListView(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(30.r),
-              ),
-              child: AppBar(
-                backgroundColor: AppColors.secondry,
-                title: Text(
-                  'Profile',
-                  style: AppStyles.titleStyle,
+            // User card
+            BigUserCard(
+              backgroundColor: Colors.red,
+              userName: namee,
+              userProfilePic: Center(
+                  child: Text(namee.isNotEmpty ? namee[0] : '',
+                      style: AppStyles.welcomeSytle
+                          .copyWith(color: Colors.white, fontSize: 50.sp))),
+              cardActionWidget: SettingsItem(
+                icons: Icons.edit,
+                iconStyle: IconStyle(
+                  withBackground: true,
+                  borderRadius: 50.r,
+                  backgroundColor: Colors.yellow[600],
                 ),
-                leading: Builder(
-                  builder: (BuildContext context) {
-                    return IconButton(
-                      icon: const Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    );
+                title: localizations.modify,
+                subtitle: localizations.tapToChangeData,
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.editProfile);
+                },
+              ),
+            ),
+            SettingsGroup(
+              items: [
+                SettingsItem(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.myRequests);
                   },
+                  icons: CupertinoIcons.pencil_outline,
+                  iconStyle: IconStyle(),
+                  title: localizations.myRequests,
+                  subtitle: localizations.seeYourRequestsStatus,
                 ),
-              ),
+                SettingsItem(
+                  onTap: () {},
+                  icons: Icons.language_rounded,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.red,
+                  ),
+                  title: localizations.language,
+                  subtitle: localizations.automatic,
+                  trailing: Switch.adaptive(
+                    value: context.read<SettingsBloc>().isEnglish,
+                    onChanged: (value) {
+                      context.read<SettingsBloc>().add(SwitchLanguage());
+                    },
+                  ),
+                ),
+              ],
             ),
-            Positioned(
-              top: 100
-                  .h, // Adjust this value to place the avatar at the desired height
-              left: 0,
-              right: 0,
-              child: Center(
-                child: CircleAvatar(
-                  radius: 50.r,
-                  backgroundColor: Colors.grey[200],
-                  backgroundImage:
-                      _imageBytes != null ? MemoryImage(_imageBytes!) : null,
-                  child: _imageBytes == null
-                      ? IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => BottomSheet(
-                                onClosing: () {},
-                                builder: (context) => Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ListTile(
-                                      leading: const Icon(Icons.camera),
-                                      title: const Text('Camera'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        _pickImage(ImageSource.camera);
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: const Icon(Icons.photo_library),
-                                      title: const Text('Gallery'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        _pickImage(ImageSource.gallery);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.camera),
-                        )
-                      : null,
+            SettingsGroup(
+              items: [
+                SettingsItem(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.about);
+                  },
+                  icons: Icons.info_rounded,
+                  iconStyle: IconStyle(
+                    backgroundColor: Colors.purple,
+                  ),
+                  title: localizations.about,
+                  subtitle: localizations.learnMoreAboutApp,
                 ),
-              ),
+              ],
+            ),
+            // You can add a settings title
+            SettingsGroup(
+              settingsGroupTitle: localizations.account,
+              items: [
+                SettingsItem(
+                  onTap: () {},
+                  icons: Icons.notifications,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.blue,
+                  ),
+                  title: localizations.notifications,
+                  trailing: Switch.adaptive(
+                    value: context.read<SettingsBloc>().isNotificationsEnabled,
+                    onChanged: (value) {
+                      context.read<SettingsBloc>().add(ToggleNotification());
+                    },
+                  ),
+                ),
+                SettingsItem(
+                  onTap: () async {
+                    bool isConnect =
+                        await ConnectivityService().getConnectionStatus();
+                    if (isConnect) widget.bloc.add(LogoutEvent());
+                  },
+                  icons: Icons.exit_to_app_rounded,
+                  title: localizations.signOut,
+                  titleStyle: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ),
-      drawer: drrawer(context, namee, phonee, widget.bloc),
-      body: Padding(
-        padding: EdgeInsets.all(16.r),
-        child: Column(
-          children: [
-            customTextField(context,
-                controller: name, icon: Icons.person, hint: 'Name'),
-            SizedBox(height: 50.h),
-            customTextField(context,
-                controller: phone, icon: Icons.phone, hint: 'Phone Number'),
-            SizedBox(height: 50.h),
-            customTextField(context,
-                controller: email, icon: Icons.email, hint: 'Email'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    name.dispose();
-    email.dispose();
-    phone.dispose();
-    super.dispose();
+      );
+    });
   }
 }

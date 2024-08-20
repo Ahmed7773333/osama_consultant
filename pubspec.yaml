@@ -3,10 +3,7 @@ description: 'A new Flutter project.'
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-# flutter_assets:
-#   assets_path: assets/
-#   output_path: lib/core/utils/
-#   filename: app_images.dart
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -43,11 +40,9 @@ dependencies:
   dio: ^5.4.3+1
   equatable: ^2.0.5
   bloc: ^8.1.4
-  google_sign_in: ^6.2.1
   dartz: ^0.10.1
   country_pickers: ^3.0.1
   shared_preferences: ^2.2.3
-  image_picker: ^1.1.2
   intl: ^0.19.0
   flutter_local_notifications: ^17.2.1
   firebase_core: ^3.2.0
@@ -55,17 +50,33 @@ dependencies:
   firebase_storage: ^12.1.1
   permission_handler: ^11.3.1
   path_provider: ^2.1.3
-  animations: ^2.0.11
-  just_audio: ^0.9.39
-  firebase_auth: ^5.1.2
-  flutter_sound: ^9.7.2
   firebase_messaging: ^15.0.3
   flutter_localizations:
     sdk: flutter
   webview_flutter: ^4.8.0
+  voice_message_package: ^2.2.1
+  introduction_screen: ^3.1.14
+  connectivity_plus: ^6.0.4
+  shimmer: ^3.0.0
+  flutter_native_splash: ^2.4.1
+  badges: ^3.1.2
+  pull_to_refresh: ^2.0.0
+  flutter_spinkit: ^5.2.1
+  agora_rtc_engine: ^6.3.2
+  record: ^5.1.2
+  carousel_slider: ^5.0.0
+  url_launcher: ^6.3.0
+  cached_network_image: ^3.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: '^0.13.1'
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: 'assets/logo.png'
+  min_sdk_android: 21 # android min sdk min:16, default 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -86,6 +97,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -116,3 +128,105 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_native_splash:
+  # This package generates native code to customize Flutter's default white native splash screen
+  # with background color and splash image.
+  # Customize the parameters below, and run the following command in the terminal:
+  # dart run flutter_native_splash:create
+  # To restore Flutter's default white splash screen, run the following command in the terminal:
+  # dart run flutter_native_splash:remove
+
+  # IMPORTANT NOTE: These parameter do not affect the configuration of Android 12 and later, which
+  # handle splash screens differently than prior versions of Android.  Android 12 and later must be
+  # configured specifically in the android_12 section below.
+
+  # color or background_image is the only required parameter.  Use color to set the background
+  # of your splash screen to a solid color.  Use background_image to set the background of your
+  # splash screen to a png image. This is useful for gradients. The image will be stretch to the
+  # size of the app. Only one parameter can be used, color and background_image cannot both be set.
+  color: '#FFFFFF'
+  color_dark: '#FFFFFF'
+  #background_image: "assets/background.png"
+  image: assets/logo.png
+  image_dark: assets/logo.png
+  # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
+  # the leading # character.
+
+  # The image parameter allows you to specify an image used in the splash screen.  It must be a
+  # png file and should be sized for 4x pixel density.
+  #image: assets/splash.png
+
+  # The branding property allows you to specify an image used as branding in the splash screen.
+  # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,
+  # see the Android 12 section below.
+  #branding: assets/dart.png
+
+  # To position the branding image at the bottom of the screen you can use bottom, bottomRight,
+  # and bottomLeft. The default values is bottom if not specified or specified something else.
+  #branding_mode: bottom
+
+  # Set the branding padding from the bottom of the screen.  The default value is 0
+  # branding_bottom_padding: 24
+
+  # The color_dark, background_image_dark, image_dark, branding_dark are parameters that set the background
+  # and image when the device is in dark mode. If they are not specified, the app will use the
+  # parameters from above. If the image_dark parameter is specified, color_dark or
+  # background_image_dark must be specified.  color_dark and background_image_dark cannot both be
+  # set.
+  #color_dark: "#042a49"
+  #background_image_dark: "assets/dark-background.png"
+  #image_dark: assets/splash-invert.png
+  #branding_dark: assets/dart_dark.png
+
+  # From Android 12 onwards, the splash screen is handled differently than in previous versions.
+  # Please visit https://developer.android.com/guide/topics/ui/splash-screen
+  # Following are specific parameters for Android 12+.
+  android_12:
+    # The image parameter sets the splash screen icon image.  If this parameter is not specified,
+    # the app's launcher icon will be used instead.
+    # Please note that the splash screen will be clipped to a circle on the center of the screen.
+    # App icon with an icon background is required for API level 31+.
+    # More info: https://developer.android.com/guide/topics/ui/splash-screen#api31
+    image: assets/logo.png
+    image_dark: assets/logo.png
+
+    # The icon_background_color parameter sets the background color for the image parameter
+    # above. If this parameter is not specified, the color parameter will be used instead.
+    # icon_background_color: "#111111"
+
+    # The icon_background_image parameter sets the background image for the image parameter
+    # above. If this parameter is not specified, the icon_background_color parameter will be used
+    # instead. Please note that the icon background image will be cropped to a circle and this
+    # parameter is supported for Android API level 31+.
+    # icon_background_image: assets/dark-background.png
+
+    # The icon_background_color_dark, icon_background_image_dark and image_dark are parameters that
+    # set the icon background and image when the device is in dark mode. If they are not specified,
+    # the app will use the parameters from above.
+    # icon_background_color_dark: "#000000"
+    # icon_background_image_dark: assets/dark-background.png
+    # image_dark: assets/splash-invert.png
+
+  # The android_gravity and ios_content_mode parameters set the gravity of the splash image for
+  # Android and the content mode of the splash image for iOS.  The default values are center for
+  # both parameters.
+  # Valid android_gravity values are: bottom, center, end, left, right, start, and top.
+  #android_gravity: center
+  # Valid ios_content_mode values are: center, bottom, top, scaleToFill, scaleAspectFill, and
+  # scaleAspectFit.
+  #ios_content_mode: center
+
+  # The fullscreen parameter removes the app bar from the splash screen.
+  #fullscreen: true
+
+  # The android_resize_mode and ios_resize_mode parameters set the resizeMode of the splash image for
+  # Android and iOS.  The default values are cover for Android and center for iOS.
+  # Valid android_resize_mode values are: contain, cover, and stretch.
+  #android_resize_mode: cover
+  # Valid ios_resize_mode values are: contain, cover, and stretch.
+  #ios_resize_mode: center
+
+  # The fill parameter tells the splash screen to fill the entire screen.  This is useful for an
+  # image that matches the app icon with a solid color background, and the background color setting.
+  #fill: true

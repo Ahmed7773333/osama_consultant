@@ -10,6 +10,12 @@ class UserPreferences {
   static const _keyIsAdmin = 'is_admin';
   static const _keyCreatedAt = 'created_at';
   static const _keyFcmToken = 'fcm_token';
+  static const _keyConsultantsCount = 'consultants_count';
+
+  static const _firstTime = 'firstTime';
+  static const _isEnglish = 'isEnglish';
+
+  static const _isNotificationEnable = 'isNotificationEnable';
 
   static Future<void> saveUserData(UserModel userData) async {
     final prefs = await SharedPreferences.getInstance();
@@ -21,6 +27,33 @@ class UserPreferences {
     await prefs.setInt(_keyIsAdmin, userData.isAdmin ?? 0);
     await prefs.setString(_keyCreatedAt, userData.createdAt ?? '');
     await prefs.setString(_keyFcmToken, userData.fcm ?? '');
+    await prefs.setInt(_keyConsultantsCount, userData.consultantCounter ?? 0);
+  }
+
+  static Future<void> updateNameAndPhone(String name, String phone) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyName, name);
+    await prefs.setString(_keyPhone, phone);
+  }
+
+  static Future<void> setConsultantCount(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_keyConsultantsCount, count);
+  }
+
+  static Future<void> enterFirstTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_firstTime, false);
+  }
+
+  static Future<void> setIsEnglish(bool i) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isEnglish, i);
+  }
+
+  static Future<void> setIsNotificationEnabled(bool i) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_isNotificationEnable, i);
   }
 
   static Future<void> removeUserData() async {
@@ -40,9 +73,29 @@ class UserPreferences {
     return prefs.getString(_keyToken);
   }
 
+  static Future<bool?> getFirstTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_firstTime);
+  }
+
+  static Future<bool?> getIsEnglish() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isEnglish);
+  }
+
+  static Future<bool?> getIsNotificationEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_isNotificationEnable);
+  }
+
   static Future<int?> getId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_keyId);
+  }
+
+  static Future<int?> getConsultantsCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_keyConsultantsCount);
   }
 
   static Future<String?> getName() async {

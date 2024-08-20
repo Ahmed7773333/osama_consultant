@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 part of 'settings_bloc.dart';
 
 abstract class SettingsState extends Equatable {
@@ -9,20 +11,12 @@ abstract class SettingsState extends Equatable {
 
 class SettingsInitial extends SettingsState {}
 
-class LanguageChanged extends SettingsState {
-  final String language;
+class LanguageChanged extends SettingsState {}
 
-  const LanguageChanged(this.language);
+class NotificationToggled extends SettingsState {}
 
-  @override
-  List<Object> get props => [language];
-}
+class LanguageClicked extends SettingsState {}
 
-class NotificationToggled extends SettingsState {
-  final bool isEnabled;
+class NotificationClicked extends SettingsState {}
 
-  const NotificationToggled(this.isEnabled);
-
-  @override
-  List<Object> get props => [isEnabled];
-}
+class initSettingsState extends SettingsState {}

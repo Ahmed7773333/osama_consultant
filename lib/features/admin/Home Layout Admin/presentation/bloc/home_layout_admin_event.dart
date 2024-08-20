@@ -8,6 +8,8 @@ abstract class HomeLayoutAdminEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class GetChatsEvent extends HomeLayoutAdminEvent {}
+class GetAllChatsEvent extends HomeLayoutAdminEvent {}
+
+class GetUnReadChatsEvent extends HomeLayoutAdminEvent {}
 
 class LogoutAdminEvent extends HomeLayoutAdminEvent {}

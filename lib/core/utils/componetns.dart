@@ -1,6 +1,9 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:osama_consul/core/utils/app_colors.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 // import 'package:shop_app/core/utils/app_colors.dart';
 
 class Components {
@@ -62,29 +65,12 @@ class Components {
     );
   }
 
-  static Widget openContainers({Widget? closedWidget, Widget? openedWidget}) {
-    return OpenContainer(
-      closedElevation: 0,
-      openElevation: 0,
-      transitionDuration: const Duration(milliseconds: 500),
-      closedColor: Colors.transparent,
-      openColor: Colors.transparent,
-      closedBuilder: (BuildContext context, void Function() action) {
-        return closedWidget!;
-      },
-      openBuilder:
-          (BuildContext context, void Function({Object? returnValue}) action) {
-        return openedWidget!;
-      },
-    );
-  }
-
   static Widget fillButton(context,
       {Color? color, String? text, VoidCallback? onPressed}) {
-    return FilledButton(
+    return ElevatedButton(
       onPressed: onPressed,
-      style: FilledButton.styleFrom(
-        backgroundColor: color,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.secondry,
         fixedSize: Size(110.w, 48.h),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.r)),
       ),
@@ -92,11 +78,127 @@ class Components {
         child: Text(
           text ?? '',
           maxLines: 1,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              color: color == Theme.of(context).colorScheme.secondary
-                  ? Colors.white
-                  : Theme.of(context).colorScheme.secondary,
-              fontSize: 14.sp),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: Colors.white, fontSize: 14.sp),
+        ),
+      ),
+    );
+  }
+
+  static Widget shrimList() {
+    return ListView.separated(
+      itemCount: 10, // Number of shimmer items
+      itemBuilder: (context, index) {
+        return Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Card(
+            elevation: 20,
+            child: ListTile(
+              leading: Container(
+                height: 70.h,
+                width: 50.w,
+                decoration: ShapeDecoration(
+                    color: Colors.grey[300],
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5.r)))),
+              ),
+              title: Container(
+                height: 20.h,
+                color: Colors.grey[300],
+              ),
+              subtitle: Container(
+                height: 14.h,
+                color: Colors.grey[300],
+              ),
+              trailing: Container(
+                height: 20.h,
+                width: 60.w,
+                color: Colors.grey[300],
+              ),
+            ),
+          ),
+        );
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 10.h);
+      },
+    );
+  }
+
+  static Widget reloadPull({required Widget child, required Function onLoad}) {
+    final RefreshController _refreshController =
+        RefreshController(initialRefresh: false);
+    return SmartRefresher(
+      enablePullDown: true,
+      enablePullUp: false,
+      header: WaterDropHeader(
+        waterDropColor: AppColors.secondry,
+      ),
+      controller: _refreshController,
+      onRefresh: () async {
+        await onLoad();
+        _refreshController.refreshCompleted();
+      },
+      child: child,
+    );
+  }
+
+  static Widget circularProgressHeart() {
+    return SpinKitPumpingHeart(
+      color: Colors.redAccent,
+      size: 50.r,
+    );
+  }
+
+  static void showMessage(BuildContext context,
+      {required String content, required IconData icon, required Color color}) {
+    showDialog(
+      context: context,
+      builder: (c) => Dialog(
+        elevation: 1,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r)),
+        child: Container(
+          width: MediaQuery.of(context).size.width / 1.5,
+          height: MediaQuery.of(context).size.height / 5,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15.0),
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(12.w, 26.h),
+                    blurRadius: 50.r,
+                    color: Colors.grey.withOpacity(0.1)),
+              ]),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                  backgroundColor: color,
+                  radius: 25.r,
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                  )),
+              SizedBox(
+                height: 15.h,
+              ),
+              Text(
+                content,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 15.h,
+              ),
+            ],
+          ),
         ),
       ),
     );

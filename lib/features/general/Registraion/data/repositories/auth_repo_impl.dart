@@ -11,23 +11,38 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<Either<Failures, AuthResponseModel>> signIn(
-      String email, String password, String fcm) {
-    return authRmoteDs.signIn(email, password, fcm);
+      String email, String password) {
+    return authRmoteDs.signIn(email, password);
   }
 
   @override
   Future<Either<Failures, AuthResponseModel>> signUP(
-      String email,
-      String password,
-      String name,
-      String phone,
-      String repassword,
-      String fcm) {
-    return authRmoteDs.signUP(email, password, name, phone, repassword, fcm);
+    String email,
+    String password,
+    String name,
+    String phone,
+    String repassword,
+  ) {
+    return authRmoteDs.signUP(email, password, name, phone, repassword);
   }
 
   @override
-  Future<Either<Failures, AuthResponseModel>> signInGoogle() {
-    return authRmoteDs.signInGoogle();
+  Future<void> changePassword(String email, String newPassword, int otp) {
+    return authRmoteDs.changePassword(email, newPassword, otp);
   }
+
+  @override
+  Future<void> forgetPasswordRequest(String email) {
+    return authRmoteDs.forgetPasswordRequest(email);
+  }
+
+  // @override
+  // Future<Either<Failures, AuthResponseModel>> signInGoogle() {
+  //   return authRmoteDs.signInGoogle();
+  // }
+
+  // @override
+  // Future<Either<Failures, AuthResponseModel>> signUpGoogle() {
+  //   return authRmoteDs.signUpGoogle();
+  // }
 }
