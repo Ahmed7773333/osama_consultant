@@ -8,6 +8,8 @@ import 'package:osama_consul/config/app_routes.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:osama_consul/core/utils/app_animations.dart';
 import 'package:osama_consul/core/utils/app_styles.dart';
+import 'package:osama_consul/core/utils/assets.dart';
+import 'package:osama_consul/core/utils/componetns.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/presentation/bloc/chat_screen_bloc.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/data/models/chat_model.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/buy_consultants.dart';
@@ -16,7 +18,7 @@ import 'package:osama_consul/features/general/Chat%20Screen/presentation/widgets
 import '../../../../../core/network/check_internet.dart';
 import '../../../../../core/network/firebase_helper.dart';
 import '../../../../../core/utils/app_colors.dart';
-import '../../domain/usecases/send_message.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen(this.id, this.fromAdmin, {super.key});
@@ -32,12 +34,38 @@ class _ChatScreenState extends State<ChatScreen> {
   ChatScreenBloc? bloc;
   int messagesLength = 0;
   int consultantCount = 0;
+  final GlobalKey recordKey = GlobalKey();
+  final GlobalKey payKey = GlobalKey();
+  final GlobalKey countKey = GlobalKey();
+  final GlobalKey pauseKey = GlobalKey();
+  final GlobalKey stopKey = GlobalKey();
+
   @override
   void initState() {
     FirebaseHelper()
         .markAllMessagesAsReadAndResetUnreadCount(widget.id.chatOwner ?? '');
     setCount();
+    _checkFirstTime();
+
     super.initState();
+  }
+
+  void showCasse() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ShowCaseWidget.of(context)
+          .startShowCase([payKey, countKey, recordKey, pauseKey, stopKey]);
+    });
+  }
+
+  Future<void> _checkFirstTime() async {
+    bool isFirstTime = await UserPreferences.getShowCase() ?? true;
+    if (isFirstTime) {
+      // Start showcase if this is the first time
+      showCasse();
+
+      // Set the flag so that showcase is not shown next time
+      await UserPreferences.setShowCase();
+    }
   }
 
   void setCount() async {
@@ -51,11 +79,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setCount();
     return BlocProvider(
       create: (context) => ChatScreenBloc()..add(InitRecorder()),
       child: BlocConsumer<ChatScreenBloc, ChatScreenState>(
-        listener: (BuildContext context, ChatScreenState state) {},
+        listener: (BuildContext context, ChatScreenState state) {
+          if (state is SendLoadingMessage) {
+            Components.circularProgressHeart(context);
+          } else if (state is SendSuccessMessage) {
+            Navigator.pop(context);
+            setCount();
+          } else if (state is SendErrorMessage) {
+            Navigator.pop(context);
+            Components.showMessage(context,
+                content: state.error,
+                icon: Icons.error,
+                color: Colors.redAccent);
+          }
+        },
         builder: (context, state) {
           bloc ??= ChatScreenBloc.get(context);
           FirebaseFirestore.instance
@@ -82,6 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       arguments: {'page': 1},
                     );
                   } else {
+                    bloc!.add(CloseEvent());
                     Navigator.pop(context);
                   }
                 },
@@ -96,12 +137,27 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               actions: [
                 if (!widget.fromAdmin)
-                  TextButton(
-                    child: Text('Consultants: ${consultantCount}  +',
-                        style: TextStyle(color: Colors.white)),
-                    onPressed: () {
-                      Navigator.push(context, TopRouting(BuyConsultants()));
-                    },
+                  Row(
+                    children: [
+                      Showcase(
+                        key: countKey,
+                        description:
+                            'This is the count of your consultants you can\'t send when it\'s zero',
+                        child: Text('Consultants: ${consultantCount}  ',
+                            style: TextStyle(color: Colors.white)),
+                      ),
+                      Showcase(
+                        key: payKey,
+                        description:
+                            'This is the pay button to buy consultants (for 30\$)',
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                  context, TopRouting(BuyConsultants()));
+                            },
+                            icon: Image.asset(Assets.coin)),
+                      ),
+                    ],
                   )
               ],
             ),
@@ -124,7 +180,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 if (bloc!.filePath.isNotEmpty && !bloc!.isRecording)
                   Container(
-                    color: Colors.white,
+                    color: AppColors.secondry,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -139,7 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             bloc!.add(DeleteFilePathEvent());
                           },
                           icon: const Icon(Icons.delete,
-                              color: AppColors.secondry),
+                              color: AppColors.onPrimary),
                         ),
                       ],
                     ),
@@ -152,9 +208,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     maxLength: 1000,
                     decoration: InputDecoration(
                       focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: AppColors.secondry)),
+                          borderSide: BorderSide(color: AppColors.onPrimary)),
                       labelText: 'Send a message...',
-                      labelStyle: const TextStyle(color: AppColors.secondry),
+                      labelStyle: const TextStyle(color: AppColors.onPrimary),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -168,61 +224,80 @@ class _ChatScreenState extends State<ChatScreen> {
                       Row(
                         children: [
                           const Icon(Icons.fiber_manual_record,
-                              color: AppColors.secondry),
+                              color: AppColors.onPrimary),
                           SizedBox(width: 8.w),
                           Text(
                             bloc!.isPaused
                                 ? 'Recording Paused'
                                 : 'Recording...',
-                            style: const TextStyle(color: AppColors.secondry),
+                            style: const TextStyle(color: AppColors.onPrimary),
                           ),
                         ],
                       )
                     else
-                      IconButton(
-                        icon: const Icon(
-                          Icons.mic,
-                          color: AppColors.secondry,
+                      Showcase(
+                        key: recordKey,
+                        description:
+                            'This is the record button to start recording with limit up to 10 minutes',
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.mic,
+                            color: AppColors.onPrimary,
+                          ),
+                          onPressed: () => bloc!.add(StartRecorder()),
                         ),
-                        onPressed: () => bloc!.add(StartRecorder()),
                       ),
                     if (bloc!.isRecording)
-                      IconButton(
-                        icon: bloc!.isPaused
-                            ? const Icon(
-                                Icons.play_arrow,
-                                color: AppColors.secondry,
-                              )
-                            : const Icon(
-                                Icons.pause,
-                                color: AppColors.secondry,
-                              ),
-                        onPressed: bloc!.isPaused
-                            ? () => bloc!.add(ResumeRecorder())
-                            : () => bloc!.add(PauseRecorder()),
+                      Showcase(
+                        key: pauseKey,
+                        description:
+                            'This is the pause button to pause or resume your record without stoping it',
+                        child: IconButton(
+                          icon: bloc!.isPaused
+                              ? const Icon(
+                                  Icons.play_arrow,
+                                  color: AppColors.onPrimary,
+                                )
+                              : const Icon(
+                                  Icons.pause,
+                                  color: AppColors.onPrimary,
+                                ),
+                          onPressed: bloc!.isPaused
+                              ? () => bloc!.add(ResumeRecorder())
+                              : () => bloc!.add(PauseRecorder()),
+                        ),
                       ),
                     if (bloc!.isRecording)
-                      IconButton(
-                        icon: const Icon(
-                          Icons.stop,
-                          color: AppColors.secondry,
+                      Showcase(
+                        key: stopKey,
+                        description:
+                            'This is the stop button to finish your record and test it before sending',
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.stop,
+                            color: AppColors.onPrimary,
+                          ),
+                          onPressed: () => bloc!.add(StopRecorder()),
                         ),
-                        onPressed: () => bloc!.add(StopRecorder()),
                       ),
                     IconButton(
                       icon: const Icon(
                         Icons.send,
-                        color: AppColors.secondry,
+                        color: AppColors.onPrimary,
                       ),
                       onPressed: () async {
                         if (!bloc!.isRecording) {
                           bool isConnect =
                               await ConnectivityService().getConnectionStatus();
                           if (isConnect) {
-                            await sendMessage(bloc!.filePath, _controller,
-                                context, widget.id.chatOwner, widget.fromAdmin);
+                            bloc!.add(SendEvent(
+                                bloc!.filePath,
+                                _controller,
+                                context,
+                                widget.id.chatOwner,
+                                widget.fromAdmin));
                             bloc!.add(DeleteFilePathEvent());
-                            setState(() {});
+                            setCount();
                           }
                         }
                       },

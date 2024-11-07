@@ -5,7 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
+import '../../../../../core/utils/app_animations.dart';
+import '../../../../../core/utils/app_styles.dart';
 import '../../../../general/Chat Screen/data/models/chat_model.dart';
+import '../../../../general/Chat Screen/presentation/pages/buy_consultants.dart';
 
 class ChatTab extends StatelessWidget {
   const ChatTab({super.key});
@@ -40,7 +43,7 @@ class ChatTab extends StatelessWidget {
                       top: 0,
                       left: 10.w,
                       child: Image.asset(
-                        Assets.onboarding1,
+                        Assets.slider2,
                         fit: BoxFit.cover,
                         height: 250.h,
                         width: 140.w,
@@ -53,10 +56,8 @@ class ChatTab extends StatelessWidget {
                       left: 160.w,
                       child: Text(
                         'Emotional Wellness',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppStyles.titleStyle
+                            .copyWith(color: Colors.redAccent),
                       ),
                     ),
                     Positioned(
@@ -66,7 +67,7 @@ class ChatTab extends StatelessWidget {
                         'Get support from experienced\nconsultants who specialize\nin emotional wellness. Whether\nyou need help with stress, anxiety,\nor personal growth, we are\nhere to listen and guide you.',
                         style: TextStyle(
                           fontSize: 13.sp,
-                          color: Colors.grey[700],
+                          color: Colors.grey[400],
                         ),
                       ),
                     ),
@@ -78,7 +79,7 @@ class ChatTab extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -91,6 +92,64 @@ class ChatTab extends StatelessWidget {
               onPressed: navigateToChat,
               child: Text(localizations.proceedToChat,
                   style: TextStyle(fontSize: 20.sp, color: Colors.white)),
+            ),
+            SizedBox(height: 20.h),
+            SizedBox(
+              height: 150.h,
+              width: 375.w,
+              child: Card(
+                elevation: 5,
+                child: Row(
+                  children: [
+                    // Image section
+                    Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Image.asset(
+                        Assets.card, // Add the path to your image asset
+                        fit: BoxFit.cover,
+                        height: 100.h,
+                        width: 100.w,
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    // Text and button section
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Buy Consultants Credit',
+                            style: AppStyles.redLableStyle,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            'Charge the consultant’s wallet to\nget exclusive support and services.',
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                          SizedBox(height: 10.h),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Navigate to the payment or charging screen
+                              Navigator.push(
+                                  context, TopRouting(BuyConsultants()));
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8.w),
+                              child: Text('Charge Wallet',
+                                  style: TextStyle(
+                                      fontSize: 16.sp, color: Colors.white)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

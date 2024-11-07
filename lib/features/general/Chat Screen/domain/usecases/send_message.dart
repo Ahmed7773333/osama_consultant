@@ -4,20 +4,14 @@ import 'package:osama_consul/core/api/end_points.dart';
 import 'package:osama_consul/core/cache/notification_service.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import '../../../../../core/network/firebase_helper.dart';
-import '../../../../../core/utils/componetns.dart';
 import 'up_load_file.dart';
 
 Future<void> sendMessage(String filePath, TextEditingController controller,
     context, id, bool isAdmin) async {
-  try {
-    if (_isTextMessage(controller, filePath)) {
-      await _sendTextMessage(controller, id, isAdmin);
-    } else if (_isAudioMessage(filePath)) {
-      await _handleAudioMessage(filePath, id, isAdmin, context);
-    }
-  } catch (e) {
-    Components.showMessage(context,
-        content: e.toString(), icon: Icons.error, color: Colors.red);
+  if (_isTextMessage(controller, filePath)) {
+    await _sendTextMessage(controller, id, isAdmin);
+  } else if (_isAudioMessage(filePath)) {
+    await _handleAudioMessage(filePath, id, isAdmin, context);
   }
 }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/utils/app_colors.dart';
+import 'package:osama_consul/core/utils/app_styles.dart';
+import 'package:osama_consul/core/utils/assets.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -67,22 +69,33 @@ class Components {
 
   static Widget fillButton(context,
       {Color? color, String? text, VoidCallback? onPressed}) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.secondry,
-        fixedSize: Size(110.w, 48.h),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.r)),
-      ),
-      child: Center(
-        child: Text(
-          text ?? '',
-          maxLines: 1,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Colors.white, fontSize: 14.sp),
-        ),
+    return SizedBox(
+      height: 48.h,
+      width: 90.w,
+      child: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          Image.asset(
+            Assets.coin,
+            height: 48.h,
+            width: 90.w,
+          ),
+          ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              fixedSize: Size(80.w, 48.h),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.r)),
+            ),
+            child: Text(
+              text ?? '',
+              maxLines: 1,
+              style: AppStyles.smallStyle,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -146,11 +159,14 @@ class Components {
     );
   }
 
-  static Widget circularProgressHeart() {
-    return SpinKitPumpingHeart(
-      color: Colors.redAccent,
-      size: 50.r,
-    );
+  static void circularProgressHeart(context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => SpinKitPumpingHeart(
+              color: Colors.redAccent,
+              size: 50.r,
+            ));
   }
 
   static void showMessage(BuildContext context,

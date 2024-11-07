@@ -18,7 +18,7 @@ class SplachScreen extends StatelessWidget {
     final isAdmin = await UserPreferences.getIsAdmin();
     final firstTime = await UserPreferences.getFirstTime();
     debugPrint(firstTime.toString());
-    if (firstTime ?? true) {
+    if (false) {
       Navigator.pushReplacementNamed(context, Routes.onboarding);
     } else {
       if (token != null) {

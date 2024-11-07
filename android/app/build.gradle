@@ -43,7 +43,7 @@ android {
     defaultConfig {
         applicationId "com.osamamounir.osama_consul"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 34
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
         multiDexEnabled true

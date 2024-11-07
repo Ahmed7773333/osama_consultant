@@ -32,7 +32,9 @@ class _MessageBubbleState extends State<MessageBubble> {
           ),
           decoration: BoxDecoration(
             color: widget.isMe
-                ? (widget.audioUrl == null ? Colors.grey[300] : Colors.white)
+                ? (widget.audioUrl == null
+                    ? Colors.grey[300]
+                    : AppColors.secondry)
                 : AppColors.secondry,
             borderRadius: BorderRadius.circular(12.r),
           ),
@@ -63,8 +65,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                   ),
                   innerPadding: 12.r,
                   cornerRadius: 20.r,
-                  activeSliderColor:
-                      widget.isMe ? AppColors.secondry : Colors.blue,
+                  activeSliderColor: Colors.red,
+                  backgroundColor: AppColors.secondry,
                 ),
             ],
           ),

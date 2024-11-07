@@ -9,6 +9,16 @@ abstract class ChatScreenEvent extends Equatable {
 
 class CloseEvent extends ChatScreenEvent {}
 
+class SendEvent extends ChatScreenEvent {
+  final filePath;
+  final controller;
+  final context;
+  final chatOwner;
+  final fromAdmin;
+  SendEvent(this.filePath, this.controller, this.context, this.chatOwner,
+      this.fromAdmin);
+}
+
 class InitRecorder extends ChatScreenEvent {}
 
 class ResumeRecorder extends ChatScreenEvent {}

@@ -25,6 +25,15 @@ class CloseRecorderState extends ChatScreenState {}
 
 class DeleteFilePathState extends ChatScreenState {}
 
+class SendLoadingMessage extends ChatScreenState {}
+
+class SendSuccessMessage extends ChatScreenState {}
+
+class SendErrorMessage extends ChatScreenState {
+  String error;
+  SendErrorMessage(this.error);
+}
+
 class RecorderErrorState extends ChatScreenState {
   String error;
   RecorderErrorState(this.error);

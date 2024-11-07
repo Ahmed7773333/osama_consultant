@@ -40,7 +40,6 @@ class _ProfileTabState extends State<ProfileTab> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    _loadPreferences();
     return BlocBuilder<SettingsBloc, SettingsState>(builder: (context, state) {
       return Padding(
         padding: EdgeInsets.all(10.r),
@@ -64,7 +63,7 @@ class _ProfileTabState extends State<ProfileTab> {
                 title: localizations.modify,
                 subtitle: localizations.tapToChangeData,
                 onTap: () {
-                  Navigator.pushNamed(context, Routes.editProfile);
+                  Navigator.pushReplacementNamed(context, Routes.editProfile);
                 },
               ),
             ),

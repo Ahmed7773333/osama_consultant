@@ -65,10 +65,8 @@ class _MeetingBookingState extends State<MeetingBooking> {
                         left: 160.w,
                         child: Text(
                           'Emotional Wellness',
-                          style: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: AppStyles.titleStyle
+                              .copyWith(color: Colors.redAccent),
                         ),
                       ),
                       Positioned(
@@ -78,7 +76,7 @@ class _MeetingBookingState extends State<MeetingBooking> {
                           'Get support from experienced\nconsultants who specialize\nin emotional wellness. Whether\nyou need help with stress, anxiety,\nor personal growth, we are\nhere to listen and guide you.',
                           style: TextStyle(
                             fontSize: 13.sp,
-                            color: Colors.grey[700],
+                            color: Colors.grey[400],
                           ),
                         ),
                       ),
@@ -90,7 +88,7 @@ class _MeetingBookingState extends State<MeetingBooking> {
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Colors.white,
                           ),
                         ),
                       ),

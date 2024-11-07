@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:osama_consul/features/user/HomeLayout/presentation/widgets/youtube_widget.dart';
+import 'package:osama_consul/core/utils/app_colors.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../../core/utils/assets.dart';
@@ -31,8 +31,8 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   final List<String> texts = [
-    'Let\'s Chat',
-    'About Osama Monir',
+    'Chat with Osama',
+    'About Osama Mounir',
     'Your Requests',
   ];
 
@@ -77,37 +77,26 @@ class _HomeTabState extends State<HomeTab> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Carousel Slider
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 200.h,
-                autoPlay: true,
-                enlargeCenterPage: true,
-              ),
-              items: [
-                Image.asset(Assets.slider3),
-                Image.asset(Assets.slider2),
-                Image.asset(Assets.slider1),
-              ],
-            ),
-
-            Divider(color: Colors.grey),
             SizedBox(
-              height: 168.h,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return YouTubeThumbnailLink(
-                    videoId: videoIds[index],
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 1.w);
-                },
-                itemCount: videoIds.length,
+              width: 315.w,
+              height: 500.h,
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Image.asset(
+                    Assets.slider1,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    bottom: 50.h,
+                    child: Text(
+                      'OSAMA MOUNIR',
+                      style: AppStyles.redLableStyle.copyWith(fontSize: 44.sp),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Divider(color: Colors.grey),
             SizedBox(
               height: 200.h,
               child: ListView.separated(
@@ -140,13 +129,13 @@ class _HomeTabState extends State<HomeTab> {
                             Icon(
                               icons[index],
                               size: 32.h,
-                              color: Colors.white,
+                              color: AppColors.accent,
                             ),
                             SizedBox(height: 10.h),
                             Text(
                               texts[index],
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.accent,
                                 fontSize: 14.sp,
                               ),
                               textAlign: TextAlign.center,
@@ -159,9 +148,66 @@ class _HomeTabState extends State<HomeTab> {
                 },
               ),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLinkCard(
+                      'YouTube',
+                      'Now you can watch the latest episodes...',
+                      'youtube.com@/c/OsamaMounirOfficial'), // Link to YouTube
+                  SizedBox(height: 20.h),
+                  _buildLinkCard(
+                      'Social Media',
+                      'Follow Osama Mounir on Facebook for the latest updates...',
+                      'www.osamamounir.com@/social-media/'), // Link to Facebook
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildLinkCard(String title, String description, String url) {
+  return InkWell(
+    onTap: () {
+      // Handle the navigation or link opening
+      launchURL(url);
+    },
+    child: Card(
+      color: Colors.grey.shade900,
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppStyles.redLableStyle.copyWith(fontSize: 22.sp),
+            ),
+            SizedBox(height: 10.h),
+            Text(
+              description,
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 14.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+void launchURL(String url) {
+  launchUrl(Uri.https(url.split('@').first, url.split('@').last));
 }

@@ -16,6 +16,7 @@ class UserPreferences {
   static const _isEnglish = 'isEnglish';
 
   static const _isNotificationEnable = 'isNotificationEnable';
+  static const showCase = 'showCase';
 
   static Future<void> saveUserData(UserModel userData) async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,6 +50,16 @@ class UserPreferences {
   static Future<void> setIsEnglish(bool i) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_isEnglish, i);
+  }
+
+  static Future<void> setShowCase() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(showCase, false);
+  }
+
+  static Future<bool?> getShowCase() async {
+    final prefs = await SharedPreferences.getInstance();
+    return await prefs.getBool(showCase);
   }
 
   static Future<void> setIsNotificationEnabled(bool i) async {

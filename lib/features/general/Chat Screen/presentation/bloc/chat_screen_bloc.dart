@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:flutter_sound/flutter_sound.dart';
+import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
-
 import '../../../../../core/network/firebase_helper.dart';
 import '../../data/models/message.dart';
+import '../../domain/usecases/send_message.dart';
 
 part 'chat_screen_event.dart';
 part 'chat_screen_state.dart';
@@ -19,6 +20,10 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
   bool isPaused = false;
   bool isPlaying = false;
   final AudioRecorder recorder = AudioRecorder();
+
+  Stopwatch? _stopwatch;
+  int _maxRecordingDuration = 600; // Max duration in seconds (3 minutes)
+  Timer? _durationChecker;
 
   static ChatScreenBloc get(context) => BlocProvider.of(context);
 
@@ -44,6 +49,16 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
       await _getChatMessagesEvent(event, emit);
     } else if (event is DeleteFilePathEvent) {
       deleteFilePath(emit);
+    } else if (event is SendEvent) {
+      try {
+        emit(SendLoadingMessage());
+        await sendMessage(event.filePath, event.controller, event.context,
+            event.chatOwner, event.fromAdmin);
+        emit(SendSuccessMessage());
+      } catch (e) {
+        emit(SendErrorMessage(e.toString()));
+      }
+      deleteFilePath(emit);
     }
   }
 
@@ -68,6 +83,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
 
       if (await recorder.hasPermission()) {
         await recorder.start(const RecordConfig(), path: filePath);
+        _startStopwatch(); // Start the stopwatch when recording starts
         emit(StartRecorderState());
       }
     } catch (e) {
@@ -79,6 +95,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     try {
       isPaused = true;
       await recorder.pause();
+      _stopwatch?.stop(); // Pause the stopwatch
       emit(PauseRecorderState());
     } catch (e) {
       emit(RecorderErrorState(e.toString()));
@@ -89,6 +106,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     try {
       isPaused = false;
       await recorder.resume();
+      _stopwatch?.start(); // Resume the stopwatch
       emit(ResumeRecorderState());
     } catch (e) {
       emit(RecorderErrorState(e.toString()));
@@ -99,6 +117,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     try {
       isRecording = false;
       await recorder.stop();
+      _stopStopwatch(); // Stop the stopwatch and reset
       emit(StopRecorderState());
     } catch (e) {
       emit(RecorderErrorState(e.toString()));
@@ -107,7 +126,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
 
   Future<void> _closeEvent(Emitter<ChatScreenState> emit) async {
     try {
-      await recorder.dispose();
+      close();
       emit(CloseRecorderState());
     } catch (e) {
       emit(RecorderErrorState(e.toString()));
@@ -137,9 +156,30 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     emit(DeleteFilePathState());
   }
 
+  // Stopwatch-related logic to handle pause and resume
+  void _startStopwatch() async {
+    _stopwatch = Stopwatch();
+    _stopwatch?.start();
+    final bool isAdmin = ((await UserPreferences.getIsAdmin()) ?? 0) == 1;
+    // Periodically check if max recording duration has been reached
+    _durationChecker = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+      if (_stopwatch!.elapsed.inSeconds >= _maxRecordingDuration && !isAdmin) {
+        add(StopRecorder()); // Automatically stop the recording
+        timer.cancel(); // Stop the periodic checks
+      }
+    });
+  }
+
+  void _stopStopwatch() {
+    _stopwatch?.stop();
+    _stopwatch?.reset();
+    _durationChecker?.cancel(); // Cancel the periodic timer
+  }
+
   @override
-  Future<void> close() async {
-    await recorder.dispose();
+  Future<void> close() {
+    recorder.dispose();
+    _stopStopwatch(); // Stop the stopwatch and any periodic checks
     return super.close();
   }
 }

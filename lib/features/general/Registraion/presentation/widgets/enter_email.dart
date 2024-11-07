@@ -39,8 +39,7 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
               ),
             ),
             SizedBox(height: 20.h),
-            Components.fillButton(
-              context,
+            ElevatedButton(
               onPressed: () {
                 widget.bloc.add(ForgetPasswordEvent(email.text));
                 Navigator.push(
@@ -49,7 +48,7 @@ class _EmailEntryPageState extends State<EmailEntryPage> {
                       builder: (context) => OtpEntryPage(widget.bloc)),
                 );
               },
-              text: 'Send OTP',
+              child: Center(child: Text('Send OTP')),
             ),
           ],
         ),

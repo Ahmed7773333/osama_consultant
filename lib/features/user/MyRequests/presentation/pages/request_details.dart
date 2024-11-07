@@ -20,6 +20,7 @@ class RequestDetails extends StatefulWidget {
 }
 
 class _RequestDetailsState extends State<RequestDetails> {
+  //TODO: production function
   Future<void> buttonPress(String status) async {
     if (status == 'awaiting-payment') {
       widget.cubit.getAuthToken();
@@ -27,7 +28,9 @@ class _RequestDetailsState extends State<RequestDetails> {
       int userId = (await UserPreferences.getId())!;
       Navigator.push(
           context,
-          RightRouting(MeetingScreen(userId, widget.cubit.rtcToken,
+          RightRouting(MeetingScreen(
+              userId,
+              widget.cubit.userRequest?.rtcToken ?? '',
               widget.cubit.userRequest?.title ?? '')));
     } else {
       null;
@@ -74,8 +77,8 @@ class _RequestDetailsState extends State<RequestDetails> {
                             context,
                             RightRouting(MeetingScreen(
                                 userId,
-                                '007eJxTYFh9yKqmIlds3ppHWrsc8p8v6a9ayCH1g22/2XPdfxV1nPkKDGamKamWiRapphamySaJyaYWKYaJBuZJyUAyxTLFMvmK7/a0hkBGBpEUJ0ZGBggE8dkZSlKLSyorKxkYAM1fIRE=',
-                                'testyyy')));
+                                '007eJxTYHD4HP3Jo2ReR9PvmSuqpucuMbrawJJ35t5DhR2nnsxcIdGnwGBmmpJqmWiRamphmmySmGxqkWKYaGCelAwkUyxTLJOn5mmnNwQyMlyZwsXKyACBID4rQ0lqcXEJAwMAU/sitg==',
+                                'tesst')));
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 12.h),

@@ -13,8 +13,8 @@ import '../bloc/homelayout_bloc.dart';
 import '../tabs/profile.dart';
 
 class HomeLayout extends StatefulWidget {
-  const HomeLayout({super.key});
-
+  const HomeLayout({this.page = 0, super.key});
+  final int page;
   @override
   State<HomeLayout> createState() => _HomeLayoutState();
 }
@@ -26,6 +26,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.page;
     _pageController = PageController(
       initialPage: _currentIndex,
     );
@@ -48,10 +49,7 @@ class _HomeLayoutState extends State<HomeLayout> {
               (Route<dynamic> route) => false,
             );
           } else if (state is BookingConfirmedLoadingState) {
-            showDialog(
-              context: context,
-              builder: (context) => Components.circularProgressHeart(),
-            );
+            Components.circularProgressHeart(context);
           } else if (state is BookingConfirmedState) {
             Navigator.pop(context);
           } else if (state is BookingConfirmedErrorState) {

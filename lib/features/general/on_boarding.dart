@@ -25,7 +25,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
       child: Image.asset(
         assetName,
         width: 350.w,
-        height: 350.w,
+        height: 350.h,
         fit: BoxFit.cover,
       ),
     );
@@ -55,19 +55,19 @@ class OnBoardingPageState extends State<OnBoardingPage> {
 
     return IntroductionScreen(
       key: introKey,
-      globalBackgroundColor: Colors.white,
+      globalBackgroundColor: Colors.black12,
       pages: [
         PageViewModel(
           title: "Schedule Meetings",
           body: "Easily set up consultations at times that work for you.",
-          image: _buildImage(Assets.onboarding1),
+          image: _buildImage(Assets.slider1),
           decoration: pageDecoration,
         ),
         PageViewModel(
           title: "Chat with Osama Monir",
           body:
               "Receive personalized advice and support from Osama Monir through our chat feature.",
-          image: _buildImage(Assets.onboarding1),
+          image: _buildImage(Assets.slider2),
           decoration: pageDecoration,
         ),
         PageViewModel(
@@ -81,7 +81,7 @@ class OnBoardingPageState extends State<OnBoardingPage> {
           title: "Join Our Community",
           body:
               "Connect with others on a similar journey and share your experiences.",
-          image: _buildImage(Assets.onboarding1),
+          image: _buildImage(Assets.slider3),
           decoration: pageDecoration,
         ),
       ],

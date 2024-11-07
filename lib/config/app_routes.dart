@@ -21,6 +21,8 @@ import '../features/general/Registraion/presentation/pages/sign_up.dart';
 import '../features/splach_page.dart';
 import '../features/user/MyRequests/presentation/pages/visa_screen.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 class Routes {
   static const String splach = '/';
   static const String homeLayout = 'home';
@@ -52,7 +54,11 @@ class RouteGenerator {
         final i = args['bloc'] as RegistraionBloc;
         return LeftRouting(SignInPage(i));
       case Routes.homeLayout:
-        return RightRouting(const HomeLayout());
+        final args = settings.arguments as Map<String, dynamic>?;
+        final i = args?['page'] as int?;
+        return RightRouting(HomeLayout(
+          page: i ?? 0,
+        ));
       case Routes.homeLayoutAdmin:
         final args = settings.arguments as Map<String, dynamic>;
         final i = args['page'] as int?;

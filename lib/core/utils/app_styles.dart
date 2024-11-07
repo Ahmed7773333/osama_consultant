@@ -8,55 +8,55 @@ class AppStyles {
     fontSize: 24,
     fontWeight: FontWeight.w600,
     fontFamily: 'Poppins',
-    color: AppColors.primary,
+    color: AppColors.textPrimary,
   );
   static TextStyle whiteLableStyle = TextStyle(
     fontSize: 13.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
-    color: AppColors.primary,
+    color: AppColors.textPrimary,
   );
-  static TextStyle redLableStyle = const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w500,
-    fontFamily: 'Poppins',
-    color: AppColors.secondry,
-  );
-  static TextStyle blueLableStyle = const TextStyle(
-    fontSize: 18,
+  static TextStyle redLableStyle = TextStyle(
+    fontSize: 18.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
     color: AppColors.accent,
   );
-  static TextStyle hintStyle = const TextStyle(
-    fontSize: 18,
+  static TextStyle blueLableStyle = TextStyle(
+    fontSize: 18.sp,
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Poppins',
+    color: AppColors.accent,
+  );
+  static TextStyle hintStyle = TextStyle(
+    fontSize: 18.sp,
     fontWeight: FontWeight.w300,
     fontFamily: 'Poppins',
     color: AppColors.textSecondary,
   );
-  static TextStyle buttonTextStyle = const TextStyle(
-    fontSize: 20,
+  static TextStyle buttonTextStyle = TextStyle(
+    fontSize: 20.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
     color: AppColors.background,
   );
-  static TextStyle titleStyle = const TextStyle(
-    fontSize: 20,
+  static TextStyle titleStyle = TextStyle(
+    fontSize: 20.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
-    color: AppColors.primary,
+    color: AppColors.accent,
   );
-  static TextStyle erorStyle = const TextStyle(
-    fontSize: 17,
+  static TextStyle erorStyle = TextStyle(
+    fontSize: 17.sp,
     fontWeight: FontWeight.w500,
     fontFamily: 'Poppins',
-    color: AppColors.secondry,
+    color: AppColors.accent,
   );
-  static TextStyle smallStyle = const TextStyle(
-    fontSize: 16,
+  static TextStyle smallStyle = TextStyle(
+    fontSize: 16.sp,
     fontWeight: FontWeight.w300,
     fontFamily: 'Poppins',
-    color: AppColors.primary,
+    color: AppColors.textPrimary,
   );
   static TextStyle smallLableStyle = TextStyle(
     fontSize: 16.0.sp,

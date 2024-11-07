@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/network/check_internet.dart';
-import 'package:osama_consul/core/utils/app_colors.dart';
 import 'package:osama_consul/features/general/Registraion/presentation/widgets/enter_email.dart';
 
 import '../../../../../config/app_routes.dart';
@@ -33,115 +32,99 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.secondry, // Light blue color at the top
-            Color(0xFFF5F5F5), // Light background color in the middle
-            Color(0xFFF5F5F5), // Light background color in the middle
-            Color(0xFFF5F5F5), // Light background color in the middle
-            AppColors.secondry, // Light background color at the bottom
-          ],
-        ),
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Material(
-        color: Colors.transparent,
-        child: Form(
-          key: keyy,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 90.h),
-                Text(
-                  localizations.signInTxt1,
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
+    return Material(
+      color: Colors.transparent,
+      child: Form(
+        key: keyy,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 90.h),
+              Text(
+                localizations.signInTxt1,
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
 
-                // SizedBox(height: 20.h),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: [
-                //     cusFilledButton(
-                //       icon: Assets.iconGoogle,
-                //       name: AppStrings.google,
-                //       onClick: () {
-                //         widget.bloc.add(SignInGoogleEvent());
-                //       },
-                //     ),
-                //     cusFilledButton(
-                //       icon: Assets.iconFacebook,
-                //       name: AppStrings.facebook,
-                //       onClick: () {},
-                //     ),
-                //   ],
-                // ),
-                SizedBox(height: 20.h),
-                Components.customTextField(
-                  hint: localizations.emailHint,
-                  controller: emailController,
+              // SizedBox(height: 20.h),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     cusFilledButton(
+              //       icon: Assets.iconGoogle,
+              //       name: AppStrings.google,
+              //       onClick: () {
+              //         widget.bloc.add(SignInGoogleEvent());
+              //       },
+              //     ),
+              //     cusFilledButton(
+              //       icon: Assets.iconFacebook,
+              //       name: AppStrings.facebook,
+              //       onClick: () {},
+              //     ),
+              //   ],
+              // ),
+              SizedBox(height: 20.h),
+              Components.customTextField(
+                hint: localizations.emailHint,
+                controller: emailController,
+              ),
+              SizedBox(height: 20.h),
+              Components.customTextField(
+                hint: localizations.passwordHint,
+                controller: passwordController,
+                isPassword: true,
+                isShow: false,
+                onPressed: () {},
+              ),
+              SizedBox(height: 20.h),
+              ElevatedButton(
+                onPressed: () async {
+                  if ((keyy.currentState?.validate() ?? false)) {
+                    // Event sign in
+                    bool isConnect =
+                        await ConnectivityService().getConnectionStatus();
+                    if (isConnect)
+                      widget.bloc.add(SignInEvent(
+                          emailController.text, passwordController.text));
+                    debugPrint('working');
+                  } else {
+                    debugPrint('error');
+                  }
+                },
+                style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
+                child: Text(
+                  localizations.logIn,
+                  style: AppStyles.buttonTextStyle,
                 ),
-                SizedBox(height: 20.h),
-                Components.customTextField(
-                  hint: localizations.passwordHint,
-                  controller: passwordController,
-                  isPassword: true,
-                  isShow: false,
-                  onPressed: () {},
-                ),
-                SizedBox(height: 20.h),
-                ElevatedButton(
-                  onPressed: () async {
-                    if ((keyy.currentState?.validate() ?? false)) {
-                      // Event sign in
-                      bool isConnect =
-                          await ConnectivityService().getConnectionStatus();
-                      if (isConnect)
-                        widget.bloc.add(SignInEvent(
-                            emailController.text, passwordController.text));
-                      debugPrint('working');
-                    } else {
-                      debugPrint('error');
-                    }
+              ),
+              SizedBox(height: 20.h),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (c) => EmailEntryPage(widget.bloc)));
                   },
-                  style: ElevatedButton.styleFrom(fixedSize: Size(295.w, 54.h)),
                   child: Text(
-                    localizations.logIn,
-                    style: AppStyles.buttonTextStyle,
+                    localizations.forget,
+                    style: AppStyles.redLableStyle,
                   ),
                 ),
-                SizedBox(height: 20.h),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (c) => EmailEntryPage(widget.bloc)));
-                    },
-                    child: Text(
-                      localizations.forget,
-                      style: AppStyles.redLableStyle,
-                    ),
+              ),
+              SizedBox(height: 20.h),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed(Routes.signUp);
+                  },
+                  child: Text(
+                    localizations.dontHave,
+                    style: AppStyles.redLableStyle,
                   ),
                 ),
-                SizedBox(height: 20.h),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushReplacementNamed(Routes.signUp);
-                    },
-                    child: Text(
-                      localizations.dontHave,
-                      style: AppStyles.redLableStyle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:osama_consul/core/utils/app_animations.dart';
 import 'package:osama_consul/core/utils/app_colors.dart';
 import 'package:osama_consul/core/utils/componetns.dart';
 import 'package:osama_consul/features/user/Edit%20Profile/presentation/bloc/edit_profile_bloc.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/pages/home_layout.dart';
 
 import '../../../../../core/cache/shared_prefrence.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -45,10 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       child: BlocConsumer<EditProfileBloc, EditProfileState>(
         listener: (context, state) {
           if (state is EditLoading) {
-            showDialog(
-              context: context,
-              builder: (context) => Components.circularProgressHeart(),
-            );
+            Components.circularProgressHeart(context);
           } else if (state is EditError) {
             Navigator.pop(context);
             Components.showMessage(context,
@@ -63,7 +62,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         },
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              leading: IconButton(
+                  onPressed: () async {
+                    Navigator.pushReplacement(
+                        context, BottomRouting(HomeLayout(page: 3)));
+                  },
+                  icon: Icon(Icons.arrow_back_ios_rounded)),
+            ),
             body: Form(
               key: keyy,
               child: ListView(
