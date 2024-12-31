@@ -9,6 +9,8 @@ class Assets {
   static const String empty = 'assets/empty.png';
   static const String card = 'assets/card.jpg';
   static const String coin = 'assets/coin.png';
+  static const String on = 'assets/on.png';
+  static const String off = 'assets/off.png';
 
   static const String youtubeIcon = 'assets/youtubeIcon.jpg';
 }

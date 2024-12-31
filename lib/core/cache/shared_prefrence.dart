@@ -11,6 +11,7 @@ class UserPreferences {
   static const _keyCreatedAt = 'created_at';
   static const _keyFcmToken = 'fcm_token';
   static const _keyConsultantsCount = 'consultants_count';
+  static const _keyIsSub = 'is_sub';
 
   static const _firstTime = 'firstTime';
   static const _isEnglish = 'isEnglish';
@@ -29,12 +30,18 @@ class UserPreferences {
     await prefs.setString(_keyCreatedAt, userData.createdAt ?? '');
     await prefs.setString(_keyFcmToken, userData.fcm ?? '');
     await prefs.setInt(_keyConsultantsCount, userData.consultantCounter ?? 0);
+    await prefs.setString(_keyIsSub, userData.isSub ?? '0');
   }
 
   static Future<void> updateNameAndPhone(String name, String phone) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_keyName, name);
     await prefs.setString(_keyPhone, phone);
+  }
+  static Future<void> setSub(String sub) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyIsSub, sub);
+    
   }
 
   static Future<void> setConsultantCount(int count) async {
@@ -77,6 +84,7 @@ class UserPreferences {
     await prefs.remove(_keyIsAdmin);
     await prefs.remove(_keyCreatedAt);
     await prefs.remove(_keyFcmToken);
+    await prefs.remove(_keyIsSub);
   }
 
   static Future<String?> getToken() async {
@@ -137,5 +145,10 @@ class UserPreferences {
   static Future<String?> getFcmToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyFcmToken);
+  }
+
+  static Future<bool?> getIsSub() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyIsSub) == '1';
   }
 }

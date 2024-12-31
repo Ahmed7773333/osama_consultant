@@ -6,14 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/config/app_routes.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
-import 'package:osama_consul/core/utils/app_animations.dart';
 import 'package:osama_consul/core/utils/app_styles.dart';
 import 'package:osama_consul/core/utils/assets.dart';
 import 'package:osama_consul/core/utils/componetns.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/presentation/bloc/chat_screen_bloc.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/data/models/chat_model.dart';
-import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/buy_consultants.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/presentation/widgets/message_bubble.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../../core/network/check_internet.dart';
 import '../../../../../core/network/firebase_helper.dart';
@@ -21,9 +20,9 @@ import '../../../../../core/utils/app_colors.dart';
 import 'package:showcaseview/showcaseview.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen(this.id, this.fromAdmin, {super.key});
+  const ChatScreen(this.id, this.isAdmin, {super.key});
   final ChatModel id;
-  final bool fromAdmin;
+  final bool isAdmin;
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -33,9 +32,10 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   ChatScreenBloc? bloc;
   int messagesLength = 0;
-  int consultantCount = 0;
   final GlobalKey recordKey = GlobalKey();
   final GlobalKey payKey = GlobalKey();
+  final GlobalKey openChatKey = GlobalKey();
+
   final GlobalKey countKey = GlobalKey();
   final GlobalKey pauseKey = GlobalKey();
   final GlobalKey stopKey = GlobalKey();
@@ -44,9 +44,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     FirebaseHelper()
         .markAllMessagesAsReadAndResetUnreadCount(widget.id.chatOwner ?? '');
-    setCount();
-    _checkFirstTime();
 
+    _checkFirstTime();
     super.initState();
   }
 
@@ -59,7 +58,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _checkFirstTime() async {
     bool isFirstTime = await UserPreferences.getShowCase() ?? true;
-    if (isFirstTime) {
+
+    if (isFirstTime && !widget.isAdmin) {
       // Start showcase if this is the first time
       showCasse();
 
@@ -68,32 +68,24 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void setCount() async {
-    if (consultantCount !=
-        ((await UserPreferences.getConsultantsCount()) ?? 0)) {
-      consultantCount = (await UserPreferences.getConsultantsCount()) ?? 0;
-      debugPrint('building');
-      setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     return BlocProvider(
-      create: (context) => ChatScreenBloc()..add(InitRecorder()),
+      create: (context) => ChatScreenBloc()
+        ..add(InitRecorder(isopend: widget.id.isOpened ?? false)),
       child: BlocConsumer<ChatScreenBloc, ChatScreenState>(
         listener: (BuildContext context, ChatScreenState state) {
           if (state is SendLoadingMessage) {
             Components.circularProgressHeart(context);
           } else if (state is SendSuccessMessage) {
             Navigator.pop(context);
-            setCount();
           } else if (state is SendErrorMessage) {
             Navigator.pop(context);
             Components.showMessage(context,
                 content: state.error,
                 icon: Icons.error,
-                color: Colors.redAccent);
+                color: Color(0xffc02829));
           }
         },
         builder: (context, state) {
@@ -115,7 +107,7 @@ class _ChatScreenState extends State<ChatScreen> {
               leading: IconButton(
                 onPressed: () async {
                   bloc!.add(CloseEvent());
-                  if (widget.fromAdmin) {
+                  if (widget.isAdmin) {
                     Navigator.pushReplacementNamed(
                       context,
                       Routes.homeLayoutAdmin,
@@ -131,34 +123,53 @@ class _ChatScreenState extends State<ChatScreen> {
                   size: 20.r,
                 ),
               ),
-              title: Text(
-                widget.id.chatName ?? "",
-                style: AppStyles.welcomeSytle,
+              title: Showcase(
+                key: openChatKey,
+                description: localizations.openButtonDescription,
+                child: Row(
+                  children: [
+                    TextButton(
+                        onPressed: () {
+                          bloc!.add(UpdateIsOpenedEvent(
+                              widget.id.chatOwner ?? "", widget.isAdmin));
+                        },
+                        child: Text(
+                          (bloc!.isOpened && widget.isAdmin)
+                              ? localizations.closeChatting
+                              : localizations.startChatting,
+                          style: TextStyle(fontSize: 10.sp),
+                        )),
+                    Image.asset(
+                      (bloc!.isOpened) ? Assets.on : Assets.off,
+                      width: 30.w,
+                      height: 20.h,
+                    ),
+                  ],
+                ),
               ),
               actions: [
-                if (!widget.fromAdmin)
+                if (!widget.isAdmin)
                   Row(
                     children: [
                       Showcase(
                         key: countKey,
-                        description:
-                            'This is the count of your consultants you can\'t send when it\'s zero',
-                        child: Text('Consultants: ${consultantCount}  ',
+                        description: localizations.consultantsCountDescription,
+                        child: Text(
+                            '${localizations.consultants} ${bloc!.consultantCount}  ',
                             style: TextStyle(color: Colors.white)),
                       ),
                       Showcase(
                         key: payKey,
-                        description:
-                            'This is the pay button to buy consultants (for 30\$)',
+                        description: localizations.payButtonDescription,
                         child: IconButton(
                             onPressed: () {
-                              Navigator.pushReplacement(
-                                  context, TopRouting(BuyConsultants()));
+                              Navigator.pushReplacementNamed(
+                                  context, Routes.paymentMethods);
                             },
                             icon: Image.asset(Assets.coin)),
                       ),
                     ],
-                  )
+                  ),
               ],
             ),
             body: Column(
@@ -185,7 +196,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          'Test',
+                          localizations.test,
                           style: AppStyles.erorStyle,
                         ),
                         MessageBubble('', true,
@@ -209,7 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                       focusedBorder: const OutlineInputBorder(
                           borderSide: BorderSide(color: AppColors.onPrimary)),
-                      labelText: 'Send a message...',
+                      labelText: localizations.sendMessage,
                       labelStyle: const TextStyle(color: AppColors.onPrimary),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
@@ -228,8 +239,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           SizedBox(width: 8.w),
                           Text(
                             bloc!.isPaused
-                                ? 'Recording Paused'
-                                : 'Recording...',
+                                ? localizations.recordingPaused
+                                : localizations.recording,
                             style: const TextStyle(color: AppColors.onPrimary),
                           ),
                         ],
@@ -237,8 +248,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     else
                       Showcase(
                         key: recordKey,
-                        description:
-                            'This is the record button to start recording with limit up to 10 minutes',
+                        description: localizations.recordButtonDescription,
                         child: IconButton(
                           icon: const Icon(
                             Icons.mic,
@@ -250,8 +260,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     if (bloc!.isRecording)
                       Showcase(
                         key: pauseKey,
-                        description:
-                            'This is the pause button to pause or resume your record without stoping it',
+                        description: localizations.pauseButtonDescription,
                         child: IconButton(
                           icon: bloc!.isPaused
                               ? const Icon(
@@ -270,8 +279,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     if (bloc!.isRecording)
                       Showcase(
                         key: stopKey,
-                        description:
-                            'This is the stop button to finish your record and test it before sending',
+                        description: localizations.stopButtonDescription,
                         child: IconButton(
                           icon: const Icon(
                             Icons.stop,
@@ -290,14 +298,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           bool isConnect =
                               await ConnectivityService().getConnectionStatus();
                           if (isConnect) {
-                            bloc!.add(SendEvent(
-                                bloc!.filePath,
-                                _controller,
-                                context,
-                                widget.id.chatOwner,
-                                widget.fromAdmin));
+                            bloc!.add(SendEvent(bloc!.filePath, _controller,
+                                context, widget.id.chatOwner, widget.isAdmin));
                             bloc!.add(DeleteFilePathEvent());
-                            setCount();
                           }
                         }
                       },

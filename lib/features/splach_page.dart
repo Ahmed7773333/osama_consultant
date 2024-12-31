@@ -18,21 +18,18 @@ class SplachScreen extends StatelessWidget {
     final isAdmin = await UserPreferences.getIsAdmin();
     final firstTime = await UserPreferences.getFirstTime();
     debugPrint(firstTime.toString());
-    if (false) {
-      Navigator.pushReplacementNamed(context, Routes.onboarding);
-    } else {
-      if (token != null) {
-        if (isAdmin == 0) {
-          Navigator.of(context).pushReplacementNamed(Routes.homeLayout);
-        } else {
-          Navigator.of(context).pushReplacementNamed(
-            Routes.homeLayoutAdmin,
-            arguments: {'page': 0},
-          );
-        }
+
+    if (token != null) {
+      if (isAdmin == 0) {
+        Navigator.of(context).pushReplacementNamed(Routes.homeLayout);
       } else {
-        Navigator.of(context).pushReplacementNamed(Routes.signUp);
+        Navigator.of(context).pushReplacementNamed(
+          Routes.homeLayoutAdmin,
+          arguments: {'page': 0},
+        );
       }
+    } else {
+      Navigator.of(context).pushReplacementNamed(Routes.home);
     }
   }
 

@@ -28,4 +28,8 @@ class EndPoints {
   //forgetPassword
   static const String forgetPasswordRequest = '/api/password/forgot';
   static const String resetPassword = '/api/password/reset';
+  //quote
+  static const String getQuotes = '/api/quote';
+  static const String enterCode = '/api/user/code';
+  static const String addMember = '/api/user/addUser';
 }

@@ -16,7 +16,6 @@ class ConnectivityService {
 
   Future<bool> getConnectionStatus() async {
     List<ConnectivityResult> result = await checkConnectivity();
-    print(result.first.name);
     return (result.first == ConnectivityResult.mobile ||
         result.first == ConnectivityResult.wifi ||
         result.first == ConnectivityResult.other);

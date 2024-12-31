@@ -10,6 +10,7 @@ import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/p
 
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/utils/app_colors.dart';
+import '../../../../../core/utils/componetns.dart';
 
 class HomeLayoutAdmin extends StatefulWidget {
   const HomeLayoutAdmin(this.i, {super.key});
@@ -43,6 +44,13 @@ class _HomeLayoutAdminState extends State<HomeLayoutAdmin> {
               Routes.signUp,
               (Route<dynamic> route) => false,
             );
+          } else if (state is LogoutAdminLoadingState ||
+              state is AddMemberLoadingState ||
+              state is AddQuoteLoadingState) {
+            Components.circularProgressHeart(context);
+          } else if (state is AddMemberSuccessState ||
+              state is AddQuoteSuccessState) {
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {

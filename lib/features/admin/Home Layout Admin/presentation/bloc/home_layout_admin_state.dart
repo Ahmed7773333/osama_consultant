@@ -16,6 +16,8 @@ class AllChatsSuccessState extends HomeLayoutAdminState {}
 
 class AllChatsLoadingState extends HomeLayoutAdminState {}
 
+class SearchChatsLoadingState extends HomeLayoutAdminState {}
+
 class UnReadChatsSuccessState extends HomeLayoutAdminState {}
 
 class UnReadChatsLoadingState extends HomeLayoutAdminState {}
@@ -42,3 +44,21 @@ class LogoutAdminLoadingState extends HomeLayoutAdminState {}
 class LogoutAdminErrorState extends HomeLayoutAdminState {}
 
 class LogoutAdminSuccessState extends HomeLayoutAdminState {}
+
+class SearchChatsState extends HomeLayoutAdminState {
+  final List<ChatModel> filteredChats;
+
+  SearchChatsState(this.filteredChats);
+}
+
+class AddQuoteLoadingState extends HomeLayoutAdminState {}
+
+class AddQuoteSuccessState extends HomeLayoutAdminState {}
+
+class AddQuoteErrorState extends HomeLayoutAdminState {}
+
+class AddMemberLoadingState extends HomeLayoutAdminState {}
+
+class AddMemberSuccessState extends HomeLayoutAdminState {}
+
+class AddMemberErrorState extends HomeLayoutAdminState {}

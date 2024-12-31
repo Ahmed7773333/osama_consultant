@@ -7,16 +7,19 @@ class ChatModel {
   final String? chatOwner;
   final String? chatName;
   final int? unReadCount;
+  final bool? isOpened;
   ChatModel({
     this.chatOwner,
     this.chatName,
     this.unReadCount,
+    this.isOpened,
   });
   factory ChatModel.fromDocument(DocumentSnapshot doc) {
     return ChatModel(
       chatOwner: doc[FirebaseHelper.chatOwner],
       chatName: doc[FirebaseHelper.chatName],
       unReadCount: doc[FirebaseHelper.chatCountUnRead],
+      isOpened: doc[FirebaseHelper.isOpened],
     );
   }
   static Future<List<MessageModel>> fetchMessages(String chatId) async {

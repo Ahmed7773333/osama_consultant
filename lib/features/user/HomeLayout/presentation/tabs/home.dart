@@ -1,23 +1,30 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:osama_consul/core/utils/app_colors.dart';
+import 'package:osama_consul/core/utils/componetns.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/widgets/drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../config/app_routes.dart';
+import '../../../../../core/network/check_internet.dart';
+import '../../../../../core/network/firebase_helper.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../../core/utils/assets.dart';
 import '../../../../general/Chat Screen/data/models/chat_model.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
-
+  const HomeTab({this.bloc, super.key});
+  final HomelayoutBloc? bloc;
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
   String name = '';
+  String token = '';
 
   @override
   void initState() {
@@ -26,51 +33,91 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void setName() async {
-    name = (await UserPreferences.getName())!;
+    name = (await UserPreferences.getName()) ?? '';
+    token = (await UserPreferences.getToken()) ?? '';
+
     setState(() {});
   }
 
-  final List<String> texts = [
-    'Chat with Osama',
-    'About Osama Mounir',
-    'Your Requests',
-  ];
-
-  final List<IconData> icons = [
-    Icons.chat_bubble_outline,
-    Icons.info_rounded,
-    Icons.request_page_outlined,
-  ];
-
   void navigateToChat() async {
-    Navigator.pushNamed(context, Routes.chatScreenAdmin, arguments: {
-      'id': ChatModel(
-          chatName: (await UserPreferences.getName()) ?? '',
-          chatOwner: (await UserPreferences.getEmail()) ?? ''),
-      'isadmin': false
-    });
+    bool isConnect = await ConnectivityService().getConnectionStatus();
+    if (isConnect) {
+      Navigator.pushNamed(context, Routes.chatScreenAdmin, arguments: {
+        'id': ChatModel(
+            chatName: (await UserPreferences.getName()) ?? '',
+            chatOwner: (await UserPreferences.getEmail()) ?? '',
+            isOpened: await FirebaseHelper()
+                .getIsOpened((await UserPreferences.getEmail()) ?? '')),
+        'isadmin': false
+      });
+    } else
+      Components.showMessage(context,
+          content: 'No Internet', icon: Icons.error, color: Colors.red);
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-
+    final List<DrawerItem> items = [
+      DrawerItem(
+        title: localizations.chatWithOsama,
+        icon: Icons.chat,
+        onTap: () {
+          if (token.isEmpty) {
+            Components.showMessage(context,
+                content: localizations.youHaveRegister,
+                icon: Icons.error,
+                color: AppColors.accent);
+          } else {
+            navigateToChat();
+          }
+        },
+      ),
+      DrawerItem(
+          title: localizations.aboutOsama,
+          icon: Icons.info,
+          onTap: () {
+            Navigator.pushNamed(context, Routes.about);
+          }),
+      DrawerItem(
+          title: localizations.chargeWallet,
+          icon: Icons.wallet,
+          onTap: () {
+            if (token.isEmpty) {
+              Components.showMessage(context,
+                  content: localizations.youHaveRegister,
+                  icon: Icons.error,
+                  color: AppColors.accent);
+            } else {
+              Navigator.pushNamed(context, Routes.paymentMethods);
+            }
+          }),
+      if (token.isNotEmpty)
+        DrawerItem(
+            title: localizations.signOut,
+            icon: Icons.logout,
+            onTap: () {
+              widget.bloc!.add(LogoutEvent());
+            }),
+    ];
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(150.w, 80.h),
-        child: ClipRRect(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(25.r),
-            bottomRight: Radius.circular(25.r),
-          ),
-          child: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text(
-              '${localizations.welcome} $name!',
-              style: AppStyles.welcomeSytle,
-            ),
-          ),
+      drawer: CustomDrawer(
+          userName: name.isEmpty ? localizations.name : name,
+          itemTitles: items),
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: Text(
+          '${localizations.welcome} $name!',
+          style: AppStyles.welcomeSytle,
         ),
+        actions: [
+          if (token.isEmpty)
+            TextButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.signUp);
+                },
+                child: Text(localizations.signUp))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -90,62 +137,34 @@ class _HomeTabState extends State<HomeTab> {
                   Positioned(
                     bottom: 50.h,
                     child: Text(
-                      'OSAMA MOUNIR',
+                      localizations.osama,
                       style: AppStyles.redLableStyle.copyWith(fontSize: 44.sp),
                     ),
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 200.h,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: texts.length,
-                separatorBuilder: (context, index) => SizedBox(width: 24.h),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      if (index == 0) {
-                        navigateToChat();
-                      } else if (index == 1) {
-                        Navigator.pushNamed(context, Routes.about);
-                      } else if (index == 2) {
-                        Navigator.pushNamed(context, Routes.myRequests);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 200.w,
-                      height: 300.h,
-                      child: Card(
-                        color: Colors.grey.shade900,
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              icons[index],
-                              size: 32.h,
-                              color: AppColors.accent,
-                            ),
-                            SizedBox(height: 10.h),
-                            Text(
-                              texts[index],
-                              style: TextStyle(
-                                color: AppColors.accent,
-                                fontSize: 14.sp,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.black, fontSize: 16),
+                children: [
+                  TextSpan(
+                    text: localizations.distinctvoice,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 22.sp,
                     ),
-                  );
-                },
+                  ),
+                  TextSpan(
+                    text: localizations.seemore,
+                    style: TextStyle(
+                        color: AppColors.accent, fontWeight: FontWeight.bold),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(context, Routes.about);
+                      },
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -153,15 +172,33 @@ class _HomeTabState extends State<HomeTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildLinkCard(
-                      'YouTube',
-                      'Now you can watch the latest episodes...',
-                      'youtube.com@/c/OsamaMounirOfficial'), // Link to YouTube
+                  // Link to YouTube
                   SizedBox(height: 20.h),
-                  _buildLinkCard(
-                      'Social Media',
-                      'Follow Osama Mounir on Facebook for the latest updates...',
-                      'www.osamamounir.com@/social-media/'), // Link to Facebook
+                  ExpansionTile(
+                    title: Text(
+                      localizations.socialMedia,
+                      style: TextStyle(
+                        color: AppColors.accent,
+                        fontSize: 22.sp,
+                      ),
+                    ),
+                    trailing: Icon(Icons.expand_more),
+                    children: <Widget>[
+                      _buildLinkCard(
+                          localizations.youtube,
+                          localizations.watchLatestEpisodes,
+                          'youtube.com@/c/OsamaMounirOfficial'),
+                      _buildLinkCard(
+                          localizations.socialMedia,
+                          localizations.followOsamaOnFacebook,
+                          'www.osamamounir.com@/social-media/'),
+                      _buildLinkCard(
+                          localizations.listeningstations,
+                          localizations.listentoepisodes,
+                          'www.osamamounir.com@/listening-stations/'),
+                    ],
+                  ),
+                  // Link to Facebook
                 ],
               ),
             ),

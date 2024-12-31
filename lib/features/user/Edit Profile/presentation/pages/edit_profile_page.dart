@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:osama_consul/core/utils/app_animations.dart';
-import 'package:osama_consul/core/utils/app_colors.dart';
 import 'package:osama_consul/core/utils/componetns.dart';
 import 'package:osama_consul/features/user/Edit%20Profile/presentation/bloc/edit_profile_bloc.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/pages/home_layout.dart';
@@ -83,13 +82,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     onChange: (name) {},
                   ),
                   SizedBox(height: 24.h),
-                  Components.fillButton(context,
-                      color: AppColors.secondry,
-                      text: localizations.edit, onPressed: () {
-                    if (keyy.currentState?.validate() ?? false)
-                      EditProfileBloc.get(context).add(
-                          EditEvent(nameController.text, phoneController.text));
-                  })
+                  ElevatedButton(
+                      onPressed: () {
+                        if (keyy.currentState?.validate() ?? false)
+                          EditProfileBloc.get(context).add(EditEvent(
+                              nameController.text, phoneController.text));
+                      },
+                      child: Text(localizations.edit))
                 ],
               ),
             ),

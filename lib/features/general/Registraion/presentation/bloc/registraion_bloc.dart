@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:osama_consul/features/general/Registraion/domain/usecases/forget_password.dart';
 import 'package:osama_consul/features/general/Registraion/domain/usecases/reset_password.dart';
@@ -33,6 +34,7 @@ class RegistraionBloc extends Bloc<RegistraionEvent, RegistraionState> {
         );
         result.fold((l) {
           emit(SigninError(l));
+          debugPrint(l.message);
         }, (r) {
           emit(AuthSuccess(r));
         });

@@ -32,29 +32,6 @@ class ChatError extends HomelayoutState {
   @override
   List<Object> get props => [error];
 }
-
-class BookingConfirmedLoadingState extends HomelayoutState {}
-
-class BookingConfirmedState extends HomelayoutState {}
-
-class BookingConfirmedErrorState extends HomelayoutState {
-  final Failures error;
-  const BookingConfirmedErrorState(this.error);
-
-  @override
-  List<Object> get props => [error];
-}
-
-class GeetingAllUserSuccessState extends HomelayoutState {
-  List<ScheduleModel> scedules;
-  GeetingAllUserSuccessState(this.scedules);
-}
-
-class GetScheduleByIdUserSuccessState extends HomelayoutState {}
-
-class GetSlotByIdUserSuccessState extends HomelayoutState {}
-
-class GettingErrorUserState extends HomelayoutState {
-  Failures l;
-  GettingErrorUserState(this.l);
-}
+class QuotesLoadingState extends HomelayoutState {}
+class GetQuotesErrorState extends HomelayoutState {}
+class QuotesSuccessState extends HomelayoutState {}

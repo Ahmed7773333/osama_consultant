@@ -7,10 +7,14 @@ import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/c
 import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../../../config/app_routes.dart';
+
 class PaymentCompletedPage extends StatelessWidget {
-  const PaymentCompletedPage(this.cubit, {super.key, this.consultant});
+  const PaymentCompletedPage(this.cubit, this.isTicket,
+      {super.key, this.consultant});
   final MyrequestsCubit cubit;
   final int? consultant;
+  final bool? isTicket;
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -21,11 +25,16 @@ class PaymentCompletedPage extends StatelessWidget {
             onPressed: () async {
               String id = await UserPreferences.getEmail() ?? '';
               String name = await UserPreferences.getName() ?? '';
-
-              Navigator.pushReplacement(
-                  context,
-                  LeftRouting(ChatScreen(
-                      ChatModel(chatOwner: id, chatName: name), false)));
+              if (isTicket ?? true) {
+                Navigator.pushReplacement(
+                    context,
+                    LeftRouting(ChatScreen(
+                        ChatModel(chatOwner: id, chatName: name), false)));
+              } else
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  Routes.homeLayout,
+                  (Route<dynamic> route) => false, // Removes all routes
+                );
             },
             icon: Icon(Icons.arrow_back_ios_rounded)),
         title: Text(localizations.paymentStatus),

@@ -16,7 +16,7 @@ Women and men from all over Egypt call the show waiting for love advice from the
       appBar: AppBar(
         backgroundColor: AppColors.secondry,
         title: Text('About Osama Mounir',
-            style: TextStyle(fontSize: 22.sp, color: Colors.redAccent)),
+            style: TextStyle(fontSize: 22.sp, color: Color(0xffc02829))),
         centerTitle: true,
       ),
       body: Padding(

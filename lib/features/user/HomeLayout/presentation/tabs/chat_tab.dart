@@ -5,10 +5,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
-import '../../../../../core/utils/app_animations.dart';
+import '../../../../../core/network/check_internet.dart';
+import '../../../../../core/network/firebase_helper.dart';
 import '../../../../../core/utils/app_styles.dart';
+import '../../../../../core/utils/componetns.dart';
 import '../../../../general/Chat Screen/data/models/chat_model.dart';
-import '../../../../general/Chat Screen/presentation/pages/buy_consultants.dart';
 
 class ChatTab extends StatelessWidget {
   const ChatTab({super.key});
@@ -17,12 +18,20 @@ class ChatTab extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     void navigateToChat() async {
-      Navigator.pushNamed(context, Routes.chatScreenAdmin, arguments: {
-        'id': ChatModel(
-            chatName: (await UserPreferences.getName()) ?? '',
-            chatOwner: (await UserPreferences.getEmail()) ?? ''),
-        'isadmin': false
-      });
+      bool isConnect = await ConnectivityService().getConnectionStatus();
+      if (isConnect) {
+        Navigator.pushNamed(context, Routes.chatScreenAdmin, arguments: {
+          'id': ChatModel(
+              chatName: (await UserPreferences.getName()) ?? '',
+              chatOwner: (await UserPreferences.getEmail()) ?? '',
+              isOpened: (await FirebaseHelper()
+                  .getIsOpened((await UserPreferences.getEmail()) ?? ''))),
+          'isadmin': false
+        });
+      } else {
+        Components.showMessage(context,
+            content: 'No Internet', icon: Icons.error, color: Colors.red);
+      }
     }
 
     return SafeArea(
@@ -41,7 +50,8 @@ class ChatTab extends StatelessWidget {
                     // Image section
                     Positioned(
                       top: 0,
-                      left: 10.w,
+                      left: localizations.localeName == 'en' ? 10.w : null,
+                      right: localizations.localeName == 'ar' ? 10.w : null,
                       child: Image.asset(
                         Assets.slider2,
                         fit: BoxFit.cover,
@@ -53,18 +63,20 @@ class ChatTab extends StatelessWidget {
                     // Title and description section
                     Positioned(
                       top: 15.h,
-                      left: 160.w,
+                      left: localizations.localeName == 'en' ? 160.w : null,
+                      right: localizations.localeName == 'ar' ? 160.w : null,
                       child: Text(
-                        'Emotional Wellness',
+                        localizations.emotionalWellness,
                         style: AppStyles.titleStyle
-                            .copyWith(color: Colors.redAccent),
+                            .copyWith(color: Color(0xffc02829)),
                       ),
                     ),
                     Positioned(
                       top: 40.h,
-                      left: 160.w,
+                      left: localizations.localeName == 'en' ? 160.w : null,
+                      right: localizations.localeName == 'ar' ? 160.w : null,
                       child: Text(
-                        'Get support from experienced\nconsultants who specialize\nin emotional wellness. Whether\nyou need help with stress, anxiety,\nor personal growth, we are\nhere to listen and guide you.',
+                        localizations.emotionalSupportDescription,
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: Colors.grey[400],
@@ -73,9 +85,10 @@ class ChatTab extends StatelessWidget {
                     ),
                     Positioned(
                       top: 150.h,
-                      left: 160.w,
+                      left: localizations.localeName == 'en' ? 160.w : null,
+                      right: localizations.localeName == 'ar' ? 160.w : null,
                       child: Text(
-                        'Connect with your consultant\nanytime. Share your thoughts\nthrough text or easily record\nand send voice messages.',
+                        localizations.connectWithConsultant,
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
@@ -111,7 +124,7 @@ class ChatTab extends StatelessWidget {
                         width: 100.w,
                       ),
                     ),
-                    SizedBox(width: 10.w),
+
                     // Text and button section
                     Expanded(
                       child: Column(
@@ -119,27 +132,25 @@ class ChatTab extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Buy Consultants Credit',
+                            localizations.buyConsultantsCredit,
                             style: AppStyles.redLableStyle,
                           ),
-                          SizedBox(height: 10.h),
                           Text(
-                            'Charge the consultant’s wallet to\nget exclusive support and services.',
+                            localizations.chargeWalletDescription,
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: Colors.grey[300],
                             ),
                           ),
-                          SizedBox(height: 10.h),
                           ElevatedButton(
                             onPressed: () {
                               // Navigate to the payment or charging screen
-                              Navigator.push(
-                                  context, TopRouting(BuyConsultants()));
+                              Navigator.pushNamed(
+                                  context, Routes.paymentMethods);
                             },
                             child: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8.w),
-                              child: Text('Charge Wallet',
+                              child: Text(localizations.chargeWallet,
                                   style: TextStyle(
                                       fontSize: 16.sp, color: Colors.white)),
                             ),

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:osama_consul/features/admin/Requests%20Page/presentation/pages/requests_page.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/add_members.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/generate_code.dart';
+import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/push_notification.dart';
 import 'package:osama_consul/features/general/Chat%20Screen/presentation/pages/chat_screen.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/pages/home_layout_admin.dart';
-import 'package:osama_consul/features/admin/Meetings%20Control/presentation/pages/mettings_control.dart';
 import 'package:osama_consul/features/general/Registraion/presentation/bloc/registraion_bloc.dart';
-import 'package:osama_consul/features/general/on_boarding.dart';
 import 'package:osama_consul/features/user/Edit%20Profile/presentation/pages/edit_profile_page.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/pages/about.dart';
-import 'package:osama_consul/features/user/MyRequests/presentation/cubit/myrequests_cubit.dart';
-import 'package:osama_consul/features/user/MyRequests/presentation/pages/my_requests.dart';
-import 'package:osama_consul/features/user/MyRequests/presentation/pages/request_details.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/pages/enter_code.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/tabs/home.dart';
+import 'package:osama_consul/features/user/MyRequests/presentation/pages/wallet_method.dart';
 
 import '../../core/utils/app_strings.dart';
 import '../../core/utils/app_styles.dart';
@@ -19,7 +20,6 @@ import '../features/general/Registraion/presentation/pages/sign_in.dart';
 import '../features/user/HomeLayout/presentation/pages/home_layout.dart';
 import '../features/general/Registraion/presentation/pages/sign_up.dart';
 import '../features/splach_page.dart';
-import '../features/user/MyRequests/presentation/pages/visa_screen.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -28,18 +28,22 @@ class Routes {
   static const String homeLayout = 'home';
   static const String homeLayoutAdmin = 'homeAdmin';
   static const String chatScreenAdmin = 'chatScreenAdmin';
-  static const String manageTimes = 'ManageTimes';
-  static const String requestsPage = 'requestsPage';
   static const String visaScreen = 'visaScreen';
-  static const String myRequests = 'myRequests';
   static const String paymentScren = 'paymentScren';
-  static const String onboarding = 'onboarding';
   static const String about = 'about';
 
   static const String editProfile = 'editProfile';
+  static const String home = 'Mainhome';
+  static const String paymentMethods = 'paymentMethods';
+
+  static const String cridetPay = 'cridetPay';
+  static const String enterCode = 'enterCode';
 
   static const String signIn = 'login';
   static const String signUp = 'signUp';
+  static const String pushNotification = 'pushNotification';
+  static const String generateCode = 'generateCode';
+  static const String addMembers = 'addMembers';
 }
 
 class RouteGenerator {
@@ -47,8 +51,15 @@ class RouteGenerator {
     switch (settings.name) {
       case Routes.splach:
         return RightRouting(const SplachScreen());
-      case Routes.onboarding:
-        return RightRouting(const OnBoardingPage());
+      case Routes.home:
+        return RightRouting(const HomeTab());
+      case Routes.paymentMethods:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final i = args?['is_ticket'] as bool?;
+        return TopRouting(WalletMethod(i ?? true));
+
+      // case Routes.cridetPay:
+      //   return TopRouting(BuyConsultants());
       case Routes.signIn:
         final args = settings.arguments as Map<String, dynamic>;
         final i = args['bloc'] as RegistraionBloc;
@@ -67,31 +78,29 @@ class RouteGenerator {
         final args = settings.arguments as Map<String, dynamic>;
         final id = args['id'] as ChatModel;
         final fromAdmin = args['isadmin'] as bool;
+
         return BottomRouting(ChatScreen(id, fromAdmin));
       case Routes.signUp:
         return RightRouting(const SignUpPage());
-      case Routes.manageTimes:
-        return LeftRouting(const MettingsControl());
 
-      case Routes.requestsPage:
-        return TopRouting(const RequestsPage());
       case Routes.about:
         return TopRouting(const AboutOsama());
-      case Routes.visaScreen:
-        final args = settings.arguments as Map<String, dynamic>;
-        final cubit = args['cubit'] as MyrequestsCubit;
-        final id = args['id'] as int;
 
-        return RightRouting(VisaScreen(cubit, id));
-      case Routes.myRequests:
-        return TopRouting(const MyRequests());
       case Routes.editProfile:
         return TopRouting(EditProfilePage());
-      case Routes.paymentScren:
+      case Routes.generateCode:
+        return TopRouting(GenerateCode());
+      case Routes.addMembers:
         final args = settings.arguments as Map<String, dynamic>;
-        final cubit = args['cubit'] as MyrequestsCubit;
+        final i = args['bloc'] as HomeLayoutAdminBloc;
+        return TopRouting(AddMembers(i));
+      case Routes.pushNotification:
+        final args = settings.arguments as Map<String, dynamic>;
+        final i = args['bloc'] as HomeLayoutAdminBloc;
+        return TopRouting(PushNotification(i));
+      case Routes.enterCode:
+        return TopRouting(EnterCode());
 
-        return RightRouting(RequestDetails(cubit));
       default:
         return unDefinedScreen();
     }

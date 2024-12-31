@@ -23,6 +23,7 @@ class UserModel {
   String? fcm;
   String? provider;
   int? consultantCounter;
+  String? isSub;
 
   UserModel(
       {this.token,
@@ -34,7 +35,8 @@ class UserModel {
       this.phone,
       this.fcm,
       this.provider,
-      this.consultantCounter});
+      this.consultantCounter,
+      this.isSub});
 
   UserModel.fromJson(Map<String, dynamic> json) {
     token = json['token'];
@@ -47,5 +49,6 @@ class UserModel {
     fcm = json['fcm_token'];
     provider = json['provider'];
     consultantCounter = json['consultants_count'];
+    isSub = json['subscription'];
   }
 }

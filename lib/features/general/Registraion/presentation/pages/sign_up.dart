@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../config/app_routes.dart';
 import '../../../../../core/cache/shared_prefrence.dart';
 import '../../../../../core/network/check_internet.dart';
-import '../../../../../core/utils/app_colors.dart';
+// import '../../../../../core/utils/app_colors.dart';
 import '../../../../../core/utils/app_styles.dart';
 import '../../../../../core/utils/componetns.dart';
 import '../../../../../core/utils/get_itt.dart' as di;
@@ -57,13 +57,17 @@ class _SignUpPageState extends State<SignUpPage> {
             await UserPreferences.saveUserData(state.user.data!);
             final isAdmin = await UserPreferences.getIsAdmin();
 
-            Navigator.pop(context);
-
             if (isAdmin == 0) {
-              Navigator.of(context).pushReplacementNamed(Routes.homeLayout);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.homeLayout,
+                (Route<dynamic> route) => false, // Removes all routes
+              );
             } else {
-              Navigator.of(context).pushReplacementNamed(Routes.homeLayoutAdmin,
-                  arguments: {'page': 0});
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.homeLayoutAdmin,
+                (Route<dynamic> route) => false, // Removes all routes
+                arguments: {'page': 0},
+              );
             }
           } else if (state is AuthLoading || state is ResetPassLoading) {
             Components.circularProgressHeart(context);
@@ -152,26 +156,25 @@ class _SignUpPageState extends State<SignUpPage> {
                       isShow: false,
                     ),
                     SizedBox(height: 20.h),
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: checked,
-                          onChanged: (ch) {
-                            setState(() {
-                              checked = ch!;
-                            });
-                          },
-                          activeColor: AppColors.secondry,
-                        ),
-                        Text(localizations.iAgree,
-                            style: Theme.of(context).textTheme.displaySmall),
-                      ],
-                    ),
-                    SizedBox(height: 20.h),
+                    // Row(
+                    //   children: [
+                    //     Checkbox(
+                    //       value: checked,
+                    //       onChanged: (ch) {
+                    //         setState(() {
+                    //           checked = ch!;
+                    //         });
+                    //       },
+                    //       activeColor: AppColors.secondry,
+                    //     ),
+                    //     Text(localizations.iAgree,
+                    //         style: Theme.of(context).textTheme.displaySmall),
+                    //   ],
+                    // ),
+                    // SizedBox(height: 20.h),
                     ElevatedButton(
                       onPressed: () async {
-                        if ((keyy.currentState?.validate() ?? false) &&
-                            checked) {
+                        if ((keyy.currentState?.validate() ?? false)) {
                           bool isConnect =
                               await ConnectivityService().getConnectionStatus();
 
@@ -187,7 +190,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                           debugPrint('working');
                         } else {
-                          debugPrint('error');
+                          debugPrint('error c');
                         }
                       },
                       style: ElevatedButton.styleFrom(

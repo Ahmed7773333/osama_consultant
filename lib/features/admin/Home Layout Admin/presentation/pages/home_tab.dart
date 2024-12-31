@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:osama_consul/config/app_routes.dart';
 import 'package:osama_consul/features/admin/Home%20Layout%20Admin/presentation/bloc/home_layout_admin_bloc.dart';
 
+import '../../../../../config/app_routes.dart';
 import '../../../../../core/network/check_internet.dart';
 import '../../../../../core/utils/app_colors.dart';
 
@@ -14,10 +14,24 @@ class HomeTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> items = [
       {
-        'title': 'Manage Your Times',
-        'icon': Icons.calendar_month,
+        'title': 'Add Team Members',
+        'icon': Icons.person,
         'onTab': () {
-          Navigator.pushNamed(context, Routes.manageTimes);
+          Navigator.pushNamed(context, Routes.addMembers,arguments: {'bloc':bloc});
+        }
+      },
+      {
+        'title': 'push notification',
+        'icon': Icons.notification_add,
+        'onTab': () {
+          Navigator.pushNamed(context, Routes.pushNotification,arguments: {'bloc':bloc});
+        }
+      },
+      {
+        'title': 'Generate Code',
+        'icon': Icons.code,
+        'onTab': () {
+          Navigator.pushNamed(context, Routes.generateCode);
         }
       },
       {
@@ -28,34 +42,21 @@ class HomeTab extends StatelessWidget {
           if (isConnect) bloc.add(LogoutAdminEvent());
         }
       },
-      {
-        'title': 'Requests',
-        'icon': Icons.request_page,
-        'onTab': () {
-          Navigator.pushNamed(context, Routes.requestsPage);
-        }
-      }
     ];
 
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            homeItem(items[0]['title'], items[0]['icon'], items[0]['onTab']),
-            SizedBox(height: 24.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                homeItem(
-                    items[1]['title'], items[1]['icon'], items[1]['onTab']),
-                homeItem(
-                    items[2]['title'], items[2]['icon'], items[2]['onTab']),
-              ],
-            ),
-          ],
-        ),
-      ),
+          child: ListView.separated(
+              itemBuilder: (context, index) {
+                return homeItem(items[index]['title'], items[index]['icon'],
+                    items[index]['onTab']);
+              },
+              separatorBuilder: (context, index) {
+                return SizedBox(
+                  height: 10.h,
+                );
+              },
+              itemCount: items.length)),
     );
   }
 

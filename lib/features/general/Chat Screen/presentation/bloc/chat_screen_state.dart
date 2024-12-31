@@ -21,6 +21,8 @@ class ResumeRecorderState extends ChatScreenState {}
 
 class RecorderInitializedState extends ChatScreenState {}
 
+class RecorderInitializedLoadingState extends ChatScreenState {}
+
 class CloseRecorderState extends ChatScreenState {}
 
 class DeleteFilePathState extends ChatScreenState {}
@@ -56,3 +58,9 @@ class MessagessError extends ChatScreenState {
   @override
   List<Object> get props => [error];
 }
+
+class UpdateIsOpenedLoading extends ChatScreenState {}
+
+class UpdateIsOpenedError extends ChatScreenState {}
+
+class UpdateIsOpenedSuccsess extends ChatScreenState {}

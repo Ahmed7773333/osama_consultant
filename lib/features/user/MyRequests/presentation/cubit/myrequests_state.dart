@@ -59,3 +59,12 @@ class LoadingStoreConusltantState extends MyrequestsState {}
 class SuccessStoreConusltantState extends MyrequestsState {}
 
 class ErrorStoreConusltantState extends MyrequestsState {}
+
+class LoadingMobileWalletTokenState extends MyrequestsState {}
+
+class SuccessMobileWalletTokenState extends MyrequestsState {
+  int id;
+  SuccessMobileWalletTokenState(this.id);
+}
+
+class ErrorMobileWalletTokenState extends MyrequestsState {}

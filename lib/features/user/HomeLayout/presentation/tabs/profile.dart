@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,10 +22,20 @@ class _ProfileTabState extends State<ProfileTab> {
   String namee = '';
   String emaill = '';
   String phonee = '';
+  int consultants = 0;
+  String selectedLanguage = 'English';
+  // Default language
+
+  setSelectedLanguage() async {
+    selectedLanguage =
+        (await UserPreferences.getIsEnglish())! ? 'English' : 'عربي';
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    setSelectedLanguage();
     _loadPreferences();
   }
 
@@ -34,6 +43,8 @@ class _ProfileTabState extends State<ProfileTab> {
     namee = (await UserPreferences.getName()) ?? '';
     emaill = (await UserPreferences.getEmail()) ?? '';
     phonee = (await UserPreferences.getPhone()) ?? '';
+    consultants = (await UserPreferences.getConsultantsCount()) ?? 0;
+
     setState(() {});
   }
 
@@ -70,15 +81,6 @@ class _ProfileTabState extends State<ProfileTab> {
             SettingsGroup(
               items: [
                 SettingsItem(
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.myRequests);
-                  },
-                  icons: CupertinoIcons.pencil_outline,
-                  iconStyle: IconStyle(),
-                  title: localizations.myRequests,
-                  subtitle: localizations.seeYourRequestsStatus,
-                ),
-                SettingsItem(
                   onTap: () {},
                   icons: Icons.language_rounded,
                   iconStyle: IconStyle(
@@ -88,10 +90,25 @@ class _ProfileTabState extends State<ProfileTab> {
                   ),
                   title: localizations.language,
                   subtitle: localizations.automatic,
-                  trailing: Switch.adaptive(
-                    value: context.read<SettingsBloc>().isEnglish,
-                    onChanged: (value) {
-                      context.read<SettingsBloc>().add(SwitchLanguage());
+                  trailing: DropdownButton<String>(
+                    value: selectedLanguage,
+                    items: [
+                      DropdownMenuItem(
+                        value: 'English',
+                        child: Text('English'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'عربي',
+                        child: Text('عربي'),
+                      ),
+                    ],
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        if (selectedLanguage != newValue!) {
+                          selectedLanguage = newValue;
+                          context.read<SettingsBloc>().add(SwitchLanguage());
+                        }
+                      });
                     },
                   ),
                 ),
@@ -108,7 +125,7 @@ class _ProfileTabState extends State<ProfileTab> {
                     backgroundColor: Colors.purple,
                   ),
                   title: localizations.about,
-                  subtitle: localizations.learnMoreAboutApp,
+                  subtitle: localizations.aboutOsama,
                 ),
               ],
             ),
@@ -130,6 +147,44 @@ class _ProfileTabState extends State<ProfileTab> {
                     onChanged: (value) {
                       context.read<SettingsBloc>().add(ToggleNotification());
                     },
+                  ),
+                ),
+                SettingsItem(
+                  onTap: () async {
+                    bool isConnect =
+                        await ConnectivityService().getConnectionStatus();
+                    if (isConnect)
+                      Navigator.pushNamed(context, Routes.paymentMethods);
+                  },
+                  icons: Icons.payment,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.yellow,
+                  ),
+                  title: '${localizations.consultants} ${consultants}',
+                  titleStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                 SettingsItem(
+                  onTap: () async {
+                    bool isConnect =
+                        await ConnectivityService().getConnectionStatus();
+                    if (isConnect)
+                      Navigator.pushReplacementNamed(context, Routes.enterCode);
+                  },
+                  icons: Icons.code,
+                  iconStyle: IconStyle(
+                    iconsColor: Colors.white,
+                    withBackground: true,
+                    backgroundColor: Colors.green,
+                  ),
+                  title: localizations.code,
+                  titleStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 SettingsItem(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/utils/componetns.dart';
 import '../bloc/registraion_bloc.dart';
 import 'enter_new_password.dart';
 
@@ -40,8 +39,7 @@ class _OtpEntryPageState extends State<OtpEntryPage> {
               keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20.h),
-            Components.fillButton(
-              context,
+            ElevatedButton(
               onPressed: () {
                 // Navigate to the password reset page
                 Navigator.push(
@@ -51,7 +49,7 @@ class _OtpEntryPageState extends State<OtpEntryPage> {
                           PasswordResetPage(int.parse(otp.text), widget.bloc)),
                 );
               },
-              text: 'Verify OTP',
+              child: Text('Verify OTP'),
             ),
           ],
         ),

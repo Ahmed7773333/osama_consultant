@@ -6,6 +6,8 @@ import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
+import '../../../../../core/api/api_manager.dart';
+import '../../../../../core/api/end_points.dart';
 import '../../../../../core/network/firebase_helper.dart';
 import '../../data/models/message.dart';
 import '../../domain/usecases/send_message.dart';
@@ -20,6 +22,8 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
   bool isPaused = false;
   bool isPlaying = false;
   final AudioRecorder recorder = AudioRecorder();
+  bool isOpened = false;
+  int consultantCount = 0;
 
   Stopwatch? _stopwatch;
   int _maxRecordingDuration = 600; // Max duration in seconds (3 minutes)
@@ -34,7 +38,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
   Future<void> _mapEventToState(
       ChatScreenEvent event, Emitter<ChatScreenState> emit) async {
     if (event is InitRecorder) {
-      await _initRecorder(emit);
+      await _initRecorder(emit, event);
     } else if (event is StartRecorder) {
       await _startRecorder(emit);
     } else if (event is PauseRecorder) {
@@ -47,6 +51,8 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
       await _closeEvent(emit);
     } else if (event is GetChatMessagesEvent) {
       await _getChatMessagesEvent(event, emit);
+    } else if (event is UpdateIsOpenedEvent) {
+      await _updateIsOpened(event, emit);
     } else if (event is DeleteFilePathEvent) {
       deleteFilePath(emit);
     } else if (event is SendEvent) {
@@ -62,9 +68,16 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     }
   }
 
-  Future<void> _initRecorder(Emitter<ChatScreenState> emit) async {
+  Future<void> _initRecorder(
+      Emitter<ChatScreenState> emit, InitRecorder event) async {
     try {
+      emit(RecorderInitializedLoadingState());
       final status = await Permission.microphone.request();
+      isOpened = event.isopend;
+      if (consultantCount !=
+          ((await UserPreferences.getConsultantsCount()) ?? 0)) {
+        consultantCount = (await UserPreferences.getConsultantsCount()) ?? 0;
+      }
       if (status != PermissionStatus.granted) {
         throw Exception('Microphone permission not granted');
       }
@@ -137,6 +150,7 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
       GetChatMessagesEvent event, Emitter<ChatScreenState> emit) async {
     try {
       emit(MessagessLoading());
+
       var snapshot = await FirebaseFirestore.instance
           .collection(FirebaseHelper.chatCollection)
           .doc(event.id)
@@ -149,6 +163,48 @@ class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
     } catch (e) {
       emit(MessagessError(e.toString()));
     }
+  }
+
+  Future<void> _updateIsOpened(
+      UpdateIsOpenedEvent event, Emitter<ChatScreenState> emit) async {
+    try {
+      emit(UpdateIsOpenedLoading());
+      bool isOpen = (await FirebaseHelper().getIsOpened(event.id));
+      if (event.isAdmin) {
+        await FirebaseFirestore.instance
+            .collection(FirebaseHelper.chatCollection)
+            .doc(event.id)
+            .update({FirebaseHelper.isOpened: !isOpen});
+        isOpened = !isOpened;
+      } else {
+        if (!isOpen) {
+          _decreaseConsultantCount(await _getConsultantCount());
+          consultantCount--;
+          await FirebaseFirestore.instance
+              .collection(FirebaseHelper.chatCollection)
+              .doc(event.id)
+              .update({FirebaseHelper.isOpened: true});
+          isOpened = true;
+        }
+      }
+      emit(UpdateIsOpenedSuccsess());
+    } catch (e) {
+      emit(UpdateIsOpenedError());
+    }
+  }
+
+  Future<int> _getConsultantCount() async {
+    return await UserPreferences.getConsultantsCount() ?? 0;
+  }
+
+// Decrease the consultant count and update user preferences
+  Future<void> _decreaseConsultantCount(int consultantCount) async {
+    consultantCount--;
+    UserPreferences.setConsultantCount(consultantCount);
+    await ApiManager().deleteData(
+      EndPoints.consultantMinus,
+      data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
+    );
   }
 
   void deleteFilePath(emit) {

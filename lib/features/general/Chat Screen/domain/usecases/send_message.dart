@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:osama_consul/core/api/api_manager.dart';
-import 'package:osama_consul/core/api/end_points.dart';
 import 'package:osama_consul/core/cache/notification_service.dart';
 import 'package:osama_consul/core/cache/shared_prefrence.dart';
 import '../../../../../core/network/firebase_helper.dart';
@@ -23,14 +21,13 @@ bool _isTextMessage(TextEditingController controller, String filePath) {
 // Send a text message
 Future<void> _sendTextMessage(
     TextEditingController controller, id, bool isAdmin) async {
-  int consultantCount = await _getConsultantCount();
-  if (consultantCount == 0 && !isAdmin) {
-    throw ('Your Available Consultants is 0, you need to buy first');
+  bool isOpend = await FirebaseHelper().getIsOpened(id);
+  if (!isOpend && !isAdmin) {
+    throw ('You have to use a Consultant first');
   }
 
   FirebaseHelper().sendMessage(id, controller.text);
   controller.clear();
-  await _decreaseConsultantCount(consultantCount);
 
   await _sendNotification('New Message', id, isAdmin);
 }
@@ -43,15 +40,15 @@ bool _isAudioMessage(String filePath) {
 // Handle the audio message sending process
 Future<void> _handleAudioMessage(
     String filePath, id, bool isAdmin, BuildContext context) async {
-  int consultantCount = await _getConsultantCount();
-  if (consultantCount == 0 && !isAdmin) {
-    throw ('Your Available Consultants is 0, you need to buy first');
+  bool isOpend = await FirebaseHelper().getIsOpened(id);
+  if (!isOpend && !isAdmin) {
+    throw ('You have to use a Consultant first');
   }
 
   final audioUrl = await uploadFile(filePath);
   if (audioUrl != null) {
     await FirebaseHelper().sendMessage(id, null, audioUrl: audioUrl);
-    await _decreaseConsultantCount(consultantCount);
+
     await _sendNotification('New Audio Message', id, isAdmin);
   } else {
     _showUploadError(context);
@@ -59,19 +56,6 @@ Future<void> _handleAudioMessage(
 }
 
 // Get the consultant count from user preferences
-Future<int> _getConsultantCount() async {
-  return await UserPreferences.getConsultantsCount() ?? 0;
-}
-
-// Decrease the consultant count and update user preferences
-Future<void> _decreaseConsultantCount(int consultantCount) async {
-  consultantCount--;
-  UserPreferences.setConsultantCount(consultantCount);
-  await ApiManager().deleteData(
-    EndPoints.consultantMinus,
-    data: {'Authorization': 'Bearer ${await UserPreferences.getToken()}'},
-  );
-}
 
 // Send a push notification
 Future<void> _sendNotification(String title, id, bool isAdmin) async {

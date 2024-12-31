@@ -19,6 +19,7 @@ class FirebaseHelper {
   static String chatOwner = 'chatOwner';
   static String chatName = 'chatName';
   static String chatCountUnRead = 'UnRead Counter';
+  static String isOpened = 'IsOpened';
 
   Future<void> makeCustomerChat(userModel) async {
     if ((userModel.data!.isAdmin!) == 0) {
@@ -35,6 +36,7 @@ class FirebaseHelper {
           chatOwner: userModel.data!.email!,
           chatName: userModel.data!.name!,
           chatCountUnRead: 0,
+          isOpened: false
         });
       }
     }
@@ -98,5 +100,24 @@ class FirebaseHelper {
       }
     } else
       return null;
+  }
+
+  Future<bool> getIsOpened(String chatId) async {
+    try {
+      bool n = false;
+      DocumentReference doc = await FirebaseFirestore.instance
+          .collection(chatCollection)
+          .doc(chatId);
+
+      await doc.get().then((s) {
+        debugPrint('here');
+        n = s.get(isOpened);
+        debugPrint(n.toString());
+      });
+      return n;
+    } catch (e) {
+      debugPrint("Error retrieving isOpened: $e");
+      return false;
+    }
   }
 }

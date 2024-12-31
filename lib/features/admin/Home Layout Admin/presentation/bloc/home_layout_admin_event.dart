@@ -13,3 +13,27 @@ class GetAllChatsEvent extends HomeLayoutAdminEvent {}
 class GetUnReadChatsEvent extends HomeLayoutAdminEvent {}
 
 class LogoutAdminEvent extends HomeLayoutAdminEvent {}
+
+class SearchChatsEvent extends HomeLayoutAdminEvent {
+  final String searchQuery;
+
+  SearchChatsEvent(this.searchQuery);
+}
+
+class AddQuoteEvent extends HomeLayoutAdminEvent {
+  final String text;
+  final String image;
+  AddQuoteEvent(this.text, this.image);
+}
+
+class AddMemberEvent extends HomeLayoutAdminEvent {
+  final String name;
+  final String email;
+  final String password;
+  final int role;
+  AddMemberEvent(
+      {required this.name,
+      required this.email,
+      required this.password,
+      required this.role});
+}

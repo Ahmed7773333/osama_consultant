@@ -164,7 +164,7 @@ class Components {
         context: context,
         barrierDismissible: false,
         builder: (context) => SpinKitPumpingHeart(
-              color: Colors.redAccent,
+              color: Color(0xffc02829),
               size: 50.r,
             ));
   }

@@ -9,20 +9,7 @@ abstract class HomelayoutEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ConfirmBookingEvent extends HomelayoutEvent {}
-
 class LogoutEvent extends HomelayoutEvent {}
 
 class GetNotificationsEvent extends HomelayoutEvent {}
-
-class GetAllSchedulesUserEvent extends HomelayoutEvent {}
-
-class GetScheduleByIdUserEvent extends HomelayoutEvent {
-  int id;
-  GetScheduleByIdUserEvent(this.id);
-}
-
-class GetSlotByIdUserEvent extends HomelayoutEvent {
-  int id;
-  GetSlotByIdUserEvent(this.id);
-}
+class GetQuotesEvent extends HomelayoutEvent {}
