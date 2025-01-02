@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/bloc/homelayout_bloc.dart';
 
 import '../../../../../core/cache/shared_prefrence.dart';
 import '../../../../general/settings/presentation/bloc/settings_bloc.dart';
+import 'charge.dart';
 
 class CustomDrawer extends StatelessWidget {
   final String userName;
   final List<DrawerItem> itemTitles;
-
-  CustomDrawer({required this.userName, required this.itemTitles});
+  final String token;
+  final HomelayoutBloc? bloc;
+  CustomDrawer(this.token,
+      {required this.userName, required this.itemTitles, this.bloc});
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Drawer(
       child: SafeArea(
         child: Column(
@@ -25,6 +32,14 @@ class CustomDrawer extends StatelessWidget {
                       onTap: item.onTap,
                     ))
                 .toList(),
+            if (token.isNotEmpty && bloc != null) ChargeWalletMenu(),
+            if (token.isNotEmpty && bloc != null)
+              DrawerItem(
+                  title: localizations.signOut,
+                  icon: Icons.logout,
+                  onTap: () {
+                    bloc!.add(LogoutEvent());
+                  }),
             Spacer(), // Pushes the dropdown to the bottom of the drawer
             Padding(
               padding: EdgeInsets.all(16.r),

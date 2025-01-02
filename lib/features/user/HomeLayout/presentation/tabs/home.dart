@@ -74,36 +74,31 @@ class _HomeTabState extends State<HomeTab> {
         },
       ),
       DrawerItem(
+          title: localizations.terms_and_conditions_title,
+          icon: Icons.info,
+          onTap: () {
+            Navigator.pushNamed(context, Routes.terms);
+          }),
+      DrawerItem(
+          title: localizations.how_to_use_title,
+          icon: Icons.question_mark_rounded,
+          onTap: () {
+            Navigator.pushNamed(context, Routes.howToUse);
+          }),
+      DrawerItem(
           title: localizations.aboutOsama,
           icon: Icons.info,
           onTap: () {
             Navigator.pushNamed(context, Routes.about);
           }),
-      DrawerItem(
-          title: localizations.chargeWallet,
-          icon: Icons.wallet,
-          onTap: () {
-            if (token.isEmpty) {
-              Components.showMessage(context,
-                  content: localizations.youHaveRegister,
-                  icon: Icons.error,
-                  color: AppColors.accent);
-            } else {
-              Navigator.pushNamed(context, Routes.paymentMethods);
-            }
-          }),
-      if (token.isNotEmpty)
-        DrawerItem(
-            title: localizations.signOut,
-            icon: Icons.logout,
-            onTap: () {
-              widget.bloc!.add(LogoutEvent());
-            }),
     ];
     return Scaffold(
       drawer: CustomDrawer(
-          userName: name.isEmpty ? localizations.name : name,
-          itemTitles: items),
+        token,
+        userName: name.isEmpty ? localizations.name : name,
+        itemTitles: items,
+        bloc: widget.bloc,
+      ),
       appBar: AppBar(
         automaticallyImplyLeading: true,
         title: Text(
@@ -130,6 +125,7 @@ class _HomeTabState extends State<HomeTab> {
               child: Stack(
                 alignment: AlignmentDirectional.center,
                 children: [
+                  Positioned(top: 20.h, left: 20.w, child: LanguageDropdown()),
                   Image.asset(
                     Assets.slider1,
                     fit: BoxFit.cover,
@@ -187,15 +183,39 @@ class _HomeTabState extends State<HomeTab> {
                       _buildLinkCard(
                           localizations.youtube,
                           localizations.watchLatestEpisodes,
-                          'youtube.com@/c/OsamaMounirOfficial'),
+                          'youtube.com#/c/OsamaMounirOfficial',
+                          Assets.youtubeIcon),
                       _buildLinkCard(
-                          localizations.socialMedia,
-                          localizations.followOsamaOnFacebook,
-                          'www.osamamounir.com@/social-media/'),
+                          localizations
+                              .anghami, //https://play.anghami.com/artist/21625100
+                          localizations.watchLatestEpisodes,
+                          'play.anghami.com#/artist/21625100',
+                          Assets.anghami),
                       _buildLinkCard(
-                          localizations.listeningstations,
-                          localizations.listentoepisodes,
-                          'www.osamamounir.com@/listening-stations/'),
+                          localizations.facebook,
+                          localizations.watchLatestEpisodes,
+                          'www.facebook.com#/OsamaMounir',
+                          Assets.facebook),
+                      _buildLinkCard(
+                          localizations
+                              .instagram, //https://www.instagram.com/osamamounirofficial/?hl=en
+                          localizations.watchLatestEpisodes,
+                          'www.instagram.com#/osamamounirofficial',
+                          Assets.instagram),
+                      _buildLinkCard(
+                          localizations
+                              .tiktok, //https://www.tiktok.com/@zeynohijabi58_
+                          localizations.watchLatestEpisodes,
+                          'www.tiktok.com#/@zeynohijabi58_',
+                          Assets.ticktok),
+                      // _buildLinkCard(
+                      //     localizations.socialMedia,
+                      //     localizations.followOsamaOnFacebook,
+                      //     'www.osamamounir.com@/social-media/'),
+                      // _buildLinkCard(
+                      //     localizations.listeningstations,
+                      //     localizations.listentoepisodes,
+                      //     'www.osamamounir.com@/listening-stations/'),
                     ],
                   ),
                   // Link to Facebook
@@ -209,7 +229,8 @@ class _HomeTabState extends State<HomeTab> {
   }
 }
 
-Widget _buildLinkCard(String title, String description, String url) {
+Widget _buildLinkCard(
+    String title, String description, String url, String image) {
   return InkWell(
     onTap: () {
       // Handle the navigation or link opening
@@ -226,17 +247,16 @@ Widget _buildLinkCard(String title, String description, String url) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: AppStyles.redLableStyle.copyWith(fontSize: 22.sp),
-            ),
-            SizedBox(height: 10.h),
-            Text(
-              description,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 14.sp,
-              ),
+            Row(
+              children: [
+                Image.asset(image, width: 30.w, height: 30.h),
+                SizedBox(width: 10.w),
+                Text(
+                  title,
+                  style: AppStyles.redLableStyle
+                      .copyWith(fontSize: 22.sp, color: Colors.white),
+                ),
+              ],
             ),
           ],
         ),
@@ -246,5 +266,5 @@ Widget _buildLinkCard(String title, String description, String url) {
 }
 
 void launchURL(String url) {
-  launchUrl(Uri.https(url.split('@').first, url.split('@').last));
+  launchUrl(Uri.https(url.split('#').first, url.split('#').last));
 }

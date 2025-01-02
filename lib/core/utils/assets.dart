@@ -11,6 +11,10 @@ class Assets {
   static const String coin = 'assets/coin.png';
   static const String on = 'assets/on.png';
   static const String off = 'assets/off.png';
+  static const String ticktok = 'assets/tiktok.png';
+  static const String instagram = 'assets/instagram.png';
+  static const String facebook = 'assets/facebook.png';
+  static const String anghami = 'assets/anghami.png';
 
   static const String youtubeIcon = 'assets/youtubeIcon.jpg';
 }

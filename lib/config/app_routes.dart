@@ -10,6 +10,7 @@ import 'package:osama_consul/features/user/Edit%20Profile/presentation/pages/edi
 import 'package:osama_consul/features/user/HomeLayout/presentation/pages/about.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/pages/enter_code.dart';
 import 'package:osama_consul/features/user/HomeLayout/presentation/tabs/home.dart';
+import 'package:osama_consul/features/user/HomeLayout/presentation/widgets/how_to_use_and_terms.dart';
 import 'package:osama_consul/features/user/MyRequests/presentation/pages/wallet_method.dart';
 
 import '../../core/utils/app_strings.dart';
@@ -31,6 +32,8 @@ class Routes {
   static const String visaScreen = 'visaScreen';
   static const String paymentScren = 'paymentScren';
   static const String about = 'about';
+  static const String terms = 'terms';
+  static const String howToUse = 'howToUse';
 
   static const String editProfile = 'editProfile';
   static const String home = 'Mainhome';
@@ -85,6 +88,10 @@ class RouteGenerator {
 
       case Routes.about:
         return TopRouting(const AboutOsama());
+      case Routes.terms:
+        return TopRouting(TermsAndConditionsPage());
+      case Routes.howToUse:
+        return TopRouting(HowToUsePage());
 
       case Routes.editProfile:
         return TopRouting(EditProfilePage());
