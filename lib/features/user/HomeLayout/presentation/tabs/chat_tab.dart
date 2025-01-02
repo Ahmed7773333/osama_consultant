@@ -76,9 +76,9 @@ class ChatTab extends StatelessWidget {
                       left: localizations.localeName == 'en' ? 160.w : null,
                       right: localizations.localeName == 'ar' ? 160.w : null,
                       child: Text(
-                        localizations.emotionalSupportDescription,
+                        localizations.chatGuidelines,
                         style: TextStyle(
-                          fontSize: 13.sp,
+                          fontSize: 11.sp,
                           color: Colors.grey[400],
                         ),
                       ),
@@ -88,9 +88,9 @@ class ChatTab extends StatelessWidget {
                       left: localizations.localeName == 'en' ? 160.w : null,
                       right: localizations.localeName == 'ar' ? 160.w : null,
                       child: Text(
-                        localizations.connectWithConsultant,
+                        localizations.howToUseChatDescription,
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
